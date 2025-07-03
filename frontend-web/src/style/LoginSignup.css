@@ -41,7 +41,7 @@ body {
   border-radius: 100px;
 }
 .input-radio input{
-  width: 20px;
+  width: 15px;
 }
 label{
   font-size: 20px;
@@ -54,9 +54,9 @@ label{
   color: #6d6d6d;
 }
 p {
-  font-size: 30px;
+  font-size: 25px;
   width: 68%;
-  margin-top: 80px;
+  margin-top: 50px;
   font-style: italic;
   color: #6d6d6d;
   font-family: 'Courier New', Courier, monospace;
@@ -64,7 +64,7 @@ p {
 }
 
 form {
-  width: 500px;
+  width: 400px;
   background: white;
   display: flex;
   flex-direction: column;
@@ -74,8 +74,13 @@ form {
   border: 1px solid #bebebe;
   box-shadow: 3px 3px 8px rgba(102, 102, 102, 0.1);
   font-size: 20px;
+  scale: 0.8;
 }
-
+.container__left img{
+scale: 0.6;
+margin-top: -40px;
+  
+}
 h1 {
   margin: 15px 0 20px 0;
 }

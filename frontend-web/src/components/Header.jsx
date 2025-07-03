@@ -76,8 +76,8 @@ const Header = () => {
               )}
             </>
           ) : (
-            <button onClick={handleLoginRedirect} className="login-button">
-              Đăng nhập
+            <button onClick={handleLoginRedirect} className="profile-button">
+              <i class="ri-logout-circle-line"></i>
             </button>
           )}
         </div>

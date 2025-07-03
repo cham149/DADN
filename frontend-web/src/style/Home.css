@@ -1,0 +1,30 @@
+body{
+    margin: 0;
+}
+.body {
+  display: grid;
+  grid-template-columns: 20% 50% 20%;
+  gap: 5%;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+}
+
+.category {
+  margin-top: 50px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+.postlist {
+  margin-top: 55px;
+  padding: 10px;
+  background-color: rgb(150, 38, 26);
+  box-sizing: border-box;
+}
+.chatlist {
+  margin-top: 55px;
+  padding: 10px;
+  box-sizing: border-box;
+  background-color: rgb(222, 20, 191);
+
+}

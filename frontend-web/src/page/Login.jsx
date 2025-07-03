@@ -113,7 +113,7 @@ const Login = () => {
               <input {...register("new_username")} placeholder="Tên đăng ký" />
             </div>
             <div className="input-radio">
-              <label>Bạn là:</label>
+              <label style={{width:"60%"}}>Bạn là:</label>
               <label>
                 <input type="radio" value="buyer" {...register("role")} /> Cá nhân
               </label>

@@ -1,0 +1,12 @@
+.category-list{
+    padding: 0;
+    margin: 0;
+}
+.category-item{
+    padding: 15px 12px;
+    margin-bottom: 10px;
+    list-style: none;
+}
+.category-item:hover{
+    background-color: rgba(185, 185, 185, 0.619);
+}

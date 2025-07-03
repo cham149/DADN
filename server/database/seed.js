@@ -5,6 +5,7 @@ mongoose.connect("mongodb://localhost:27017/DADN");
 
 async function seedDatabase() {
   try {
+    // Xóa dữ liệu cũ
     await Promise.all([
       Province.deleteMany(),
       Admin.deleteMany(),
@@ -15,57 +16,62 @@ async function seedDatabase() {
       Message.deleteMany()
     ]);
 
-    const provinces = [
-      { tenTinh: 'Ha Noi' },
-      { tenTinh: 'TP Ho Chi Minh' },
-      { tenTinh: 'Da Nang' },
-      { tenTinh: 'Hai Phong' },
-      { tenTinh: 'Can Tho' },
-      { tenTinh: 'Quang Ninh' }
-    ];
-    await Province.insertMany(provinces);
+    // Thêm tỉnh
+    const provinces = await Province.insertMany([
+      { tenTinh: 'Hà Nội' },
+      { tenTinh: 'TP Hồ Chí Minh' },
+      { tenTinh: 'Đà Nẵng' },
+      { tenTinh: 'Hải Phòng' },
+      { tenTinh: 'Cần Thơ' },
+      { tenTinh: 'Quảng Ninh' }
+    ]);
 
-    const admin1 = await Admin.create({ ten: 'Admin 1', email: 'admin1@example.com', matkhau: 'admin123' });
-    const admin2 = await Admin.create({ ten: 'Admin 2', email: 'admin2@example.com', matkhau: 'admin456' });
-    const admin3 = await Admin.create({ ten: 'Admin 3', email: 'admin3@example.com', matkhau: 'admin789' });
+    // Tạo admin
+    const admin1 = await Admin.create({ ten: 'Quản trị viên 1', email: 'admin1@example.com', matkhau: 'admin123' });
+    const admin2 = await Admin.create({ ten: 'Quản trị viên 2', email: 'admin2@example.com', matkhau: 'admin456' });
+    const admin3 = await Admin.create({ ten: 'Quản trị viên 3', email: 'admin3@example.com', matkhau: 'admin789' });
 
+    // Tạo user
     const user1 = await User.create({
-      ten: 'Nguyen Van A',
+      ten: 'Nguyễn Văn A',
       email: 'a@example.com',
       matkhau: 'password123',
       vaiTro: 'caNhan',
-      avatar: 'ea226e2bdc0bdbe4d398a2aaa46e73e3.jpg',
+      avatar: 'default.jpg',
       moTa: 'Thích mua sắm và giao dịch online',
       soDienThoai: '0901234567',
       diaChi: '123 Đường A, Hà Nội'
     });
     const user2 = await User.create({
-      ten: 'Tran Thi B',
+      ten: 'Trần Thị B',
       email: 'b@example.com',
       matkhau: 'password456',
       vaiTro: 'trang',
-      avatar: 'ea226e2bdc0bdbe4d398a2aaa46e73e3.jpg',
+      avatar: 'default.jpg',
       moTa: 'Bán hàng thời trang và đồ gia dụng',
       soDienThoai: '0912345678',
-      diaChi: '456 Đường B, TP.HCM'
+      diaChi: '456 Đường B, TP Hồ Chí Minh'
     });
     const user3 = await User.create({
-      ten: 'Le Van C',
+      ten: 'Lê Văn C',
       email: 'c@example.com',
       matkhau: 'password789',
       vaiTro: 'caNhan',
-      avatar: 'ea226e2bdc0bdbe4d398a2aaa46e73e3.jpg',
+      avatar: 'default.jpg',
       moTa: 'Tìm mua đồ điện tử giá rẻ',
       soDienThoai: '0923456789',
       diaChi: '789 Đường C, Đà Nẵng'
     });
 
-    const province1 = await Province.findOne({ tenTinh: 'Ha Noi' });
-    const province2 = await Province.findOne({ tenTinh: 'TP Ho Chi Minh' });
-    const province3 = await Province.findOne({ tenTinh: 'Da Nang' });
+    // Lấy id tỉnh tương ứng
+    const province1 = provinces.find(p => p.tenTinh === 'Hà Nội');
+    const province2 = provinces.find(p => p.tenTinh === 'TP Hồ Chí Minh');
+    const province3 = provinces.find(p => p.tenTinh === 'Đà Nẵng');
+
+    // Tạo bài đăng
     const post1 = await Post.create({
       nguoiDang: user1._id,
-      danhMuc: 'doDienTu',
+      danhMuc: 'Đồ điện tử',
       tinhTrangVatDung: 'cu',
       diaChi: province1._id,
       loaiGiaoDich: 'ban',
@@ -76,7 +82,7 @@ async function seedDatabase() {
     });
     const post2 = await Post.create({
       nguoiDang: user2._id,
-      danhMuc: 'quanAo',
+      danhMuc: 'Quần áo',
       tinhTrangVatDung: 'moi',
       diaChi: province2._id,
       loaiGiaoDich: 'cho',
@@ -87,7 +93,7 @@ async function seedDatabase() {
     });
     const post3 = await Post.create({
       nguoiDang: user3._id,
-      danhMuc: 'doGiaDung',
+      danhMuc: 'Đồ gia dụng',
       tinhTrangVatDung: 'cu',
       diaChi: province3._id,
       loaiGiaoDich: 'ban',
@@ -97,71 +103,9 @@ async function seedDatabase() {
       hinhAnh: ['ghe1.jpg']
     });
 
-    const report1 = await Report.create({
-      nguoiBaoCao: user1._id,
-      nguoiBiBaoCao: user2._id,
-      baiBiBaoCao: post2._id,
-      lyDo: 'Hàng không đúng mô tả',
-      thoiGianBaoCao: new Date('2025-06-15')
-    });
-    const report2 = await Report.create({
-      nguoiBaoCao: user3._id,
-      nguoiBiBaoCao: user1._id,
-      baiBiBaoCao: post1._id,
-      lyDo: 'Giá không hợp lý',
-      thoiGianBaoCao: new Date('2025-06-20'),
-      trangThai: 'daXuLy',
-      adminXuLy: admin1._id
-    });
-    const report3 = await Report.create({
-      nguoiBaoCao: user2._id,
-      nguoiBiBaoCao: user3._id,
-      baiBiBaoCao: post3._id,
-      lyDo: 'Hàng giao chậm',
-      thoiGianBaoCao: new Date('2025-06-25'),
-      trangThai: 'biTuChoi',
-      adminXuLy: admin2._id
-    });
-
-    const conversation1 = await Conversation.create({
-      nguoi1: user1._id,
-      nguoi2: user2._id
-    });
-    const conversation2 = await Conversation.create({
-      nguoi1: user2._id,
-      nguoi2: user3._id
-    });
-    const conversation3 = await Conversation.create({
-      nguoi1: user3._id,
-      nguoi2: user1._id
-    });
-
-    const message1 = await Message.create({
-      cuocTroChuyen: conversation1._id,
-      nguoiGui: user1._id,
-      nguoiNhan: user2._id,
-      noiDung: 'Chào bạn, áo còn không?',
-      thoiGianGui: new Date('2025-07-01 10:00')
-    });
-    const message2 = await Message.create({
-      cuocTroChuyen: conversation1._id,
-      nguoiGui: user2._id,
-      nguoiNhan: user1._id,
-      noiDung: 'Còn, bạn muốn lấy không?',
-      thoiGianGui: new Date('2025-07-01 10:05'),
-      trangThai: 'daDoc'
-    });
-    const message3 = await Message.create({
-      cuocTroChuyen: conversation2._id,
-      nguoiGui: user2._id,
-      nguoiNhan: user3._id,
-      noiDung: 'Ghế còn không?',
-      thoiGianGui: new Date('2025-07-01 11:00')
-    });
-
-    console.log('✅ Dữ liệu đã được thêm thành công!');
+    console.log("✅ Seed dữ liệu thành công!");
   } catch (err) {
-    console.error('❌ Lỗi khi thêm dữ liệu:', err);
+    console.error("❌ Lỗi khi seed:", err);
   } finally {
     mongoose.connection.close();
   }

@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors"; // Thêm cors
 import { User } from "./database/database.js";
+import { Post } from "./database/database.js";
 
 const app = express();
 app.use(express.json());
@@ -77,5 +78,15 @@ app.post("/api/login", async (req, res) => {
 });
 
 
+// Danh mục
+app.get("/api/categories", async (req, res) => {
+  try {
+    const danhMucList = await Post.distinct("danhMuc");
+    res.json({ danhMuc: danhMucList });
+  } catch (err) {
+    console.error("Lỗi lấy danh mục:", err);
+    res.status(500).json({ message: "Lỗi server khi lấy danh mục" });
+  }
+});
 
 app.listen(5000, () => console.log("Server running on port 5000"));
