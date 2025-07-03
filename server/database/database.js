@@ -1,5 +1,14 @@
 import mongoose from 'mongoose';
 
+// Kết nối tới MongoDB
+mongoose.connect("mongodb://localhost:27017/DADN");
+
+// ───── Tỉnh/Thành phố ─────
+const ProvinceSchema = new mongoose.Schema({
+  tenTinh: { type: String, required: true, unique: true }
+});
+export const Province = mongoose.model('Province', ProvinceSchema);
+
 // ───── Admin ─────
 const AdminSchema = new mongoose.Schema({
   ten: String,
@@ -15,12 +24,11 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, unique: true },
   matkhau: String,
   vaiTro: { type: String, enum: ['trang', 'caNhan'] },
-  soDienThoai: String,
-  diaChi: String,
   avatar: String,
   trangThai: { type: String, enum: ['khoa', 'mo'], default: 'mo' },
   ngayTao: { type: Date, default: Date.now },
-  ngayCapNhat: { type: Date, default: Date.now }
+  ngayCapNhat: { type: Date, default: Date.now },
+  moTa: { type: String, default: '' }
 });
 export const User = mongoose.model('User', UserSchema);
 
@@ -31,7 +39,7 @@ const PostSchema = new mongoose.Schema({
   thoiGianCapNhat: { type: Date, default: Date.now },
   danhMuc: String,
   tinhTrangVatDung: { type: String, enum: ['moi', 'cu'] },
-  diaChi: String,
+  diaChi: { type: mongoose.Schema.Types.ObjectId, ref: 'Province', required: true },
   loaiGiaoDich: { type: String, enum: ['ban', 'cho'] },
   giaTien: Number,
   trangThaiBaiDang: { type: String, enum: ['daBan', 'daCho', 'con'], default: 'con' },
@@ -72,5 +80,3 @@ const MessageSchema = new mongoose.Schema({
   trangThai: { type: String, enum: ['daDoc', 'chuaDoc'], default: 'chuaDoc' }
 });
 export const Message = mongoose.model('Message', MessageSchema);
-
-
