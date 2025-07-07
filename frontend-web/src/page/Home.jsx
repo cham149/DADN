@@ -12,8 +12,8 @@ const Home = () => {
       <Header/>
       <div className='body'>
         <div className='category'><Category/></div>
-        <div className='chatlist'><ChatList/></div>
         <div className='postlist'><PostList/></div>
+        <div className='chatlist'><ChatList/></div>
       </div>
     </div>
   )

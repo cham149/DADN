@@ -19,6 +19,11 @@ const Header = () => {
     console.log("Tìm kiếm:", searchQuery);
   };
 
+  const handleHoSo = () => {
+    setIsDropdownOpen(false); 
+    navigate("/profile");   
+  };
+
   const handleDangXuat = () => {
     localStorage.removeItem("user");
     setIsDropdownOpen(false);
@@ -70,7 +75,7 @@ const Header = () => {
               </button>
               {isDropdownOpen && (
                 <div className="dropdown-menu">
-                  <ul className="dropdown-item">Hồ sơ</ul>
+                  <ul onClick={handleHoSo} className="dropdown-item">Hồ sơ</ul>
                   <ul onClick={handleDangXuat} className="dropdown-item">Đăng xuất</ul>
                 </div>
               )}

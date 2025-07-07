@@ -30,7 +30,6 @@ app.post("/api/signup", async (req, res) => {
       email,
       matkhau,
       avatar: "http://localhost:5000/uploads/avata-default.jpg",
-      soDienThoai: soDienThoai || null, // Đặt null nếu không có giá trị
       diaChi: diaChi || null,           // Đặt null nếu không có giá trị
       vaiTro,
     });

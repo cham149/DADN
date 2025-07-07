@@ -51,7 +51,7 @@ const Login = () => {
         ten: data.new_username,
         email: data.email,
         matkhau: data.new_password,
-        vaiTro: data.role === "buyer" ? "caNhan" : "trang",
+        vaiTro: data.role === "buyer" ? "Cá nhân" : "Trang",
       };
       const response = await axios.post("http://localhost:5000/api/signup", submitData);
       alert(response.data.message || "Đăng ký thành công!");
