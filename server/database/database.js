@@ -3,13 +3,6 @@ import mongoose from 'mongoose';
 // Kết nối tới MongoDB
 mongoose.connect("mongodb://localhost:27017/DADN");
 
-// ───── Tỉnh/Thành phố ─────
-const ProvinceSchema = new mongoose.Schema({
-  maTinh: { type: String, required: true, unique: true },
-  tenTinh: { type: String, required: true, unique: true }
-});
-export const Province = mongoose.model('Province', ProvinceSchema);
-
 // ───── Admin ─────
 const AdminSchema = new mongoose.Schema({
   ten: String,
@@ -38,9 +31,9 @@ const PostSchema = new mongoose.Schema({
   nguoiDang: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   thoiGianDang: { type: Date, default: Date.now },
   thoiGianCapNhat: { type: Date, default: Date.now },
-  danhMuc: String,
+  danhMuc: { type: mongoose.Schema.Types.ObjectId, ref: 'Category'},
   tinhTrangVatDung: { type: String, enum: ['Mới', 'Cũ'] },
-  diaChi: { type: mongoose.Schema.Types.ObjectId, ref: 'Province', required: true },
+  diaChi: String,
   loaiGiaoDich: { type: String, enum: ['Bán', 'Cho'] },
   giaTien: Number,
   trangThaiBaiDang: { type: String, enum: ['Đã bán', 'Đã cho', 'Còn'], default: 'Còn' },
@@ -49,6 +42,13 @@ const PostSchema = new mongoose.Schema({
   hinhAnh: String
 });
 export const Post = mongoose.model('Post', PostSchema);
+
+// ───── Danh mục sản phẩm ─────
+const CategorySchema = new mongoose.Schema({
+  tenDanhMuc: { type: String, required: true, unique: true },
+  moTa: { type: String, default: '' }
+});
+export const Category = mongoose.model('Category', CategorySchema);
 
 // ───── Lịch sử báo cáo ─────
 const ReportSchema = new mongoose.Schema({

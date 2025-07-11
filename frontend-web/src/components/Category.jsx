@@ -6,11 +6,14 @@ const Category = () => {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    // Gọi API để lấy danh mục
     const fetchCategories = async () => {
       try {
         const res = await axios.get("http://localhost:5000/api/categories");
-        setCategories(res.data.danhMuc || []);
+        console.log("Categories trong React:", categories);
+
+        console.log("Kết quả API:", res.data); 
+        setCategories(res.data.categories);
+        
       } catch (err) {
         console.error("Lỗi khi lấy danh mục:", err);
       }
@@ -23,11 +26,15 @@ const Category = () => {
     <div className="category_infor">
       <h3 className="category-title">Danh mục</h3>
       <ul className="category-list">
-        {categories.map((cat, index) => (
-          <li key={index} className="category-item">
-            {cat}
-          </li>
-        ))}
+        {Array.isArray(categories) ? (
+          categories.map((cat) => (
+            <li key={cat._id} className="category-item">
+              {cat.tenDanhMuc} {/* ✅ Chỉ hiển thị chuỗi */}
+            </li>
+          ))
+        ) : (
+          <li>Không có danh mục nào.</li>
+        )}
       </ul>
     </div>
   );

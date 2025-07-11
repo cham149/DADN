@@ -1,0 +1,33 @@
+.post-options-menu {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  width: 200px;
+}
+
+.post-options-menu div {
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.post-options-menu div:hover {
+  background-color: #f0f0f0;
+}
+
+.report-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.report-form select,
+.report-form button {
+  padding: 6px;
+  font-size: 14px;
+}

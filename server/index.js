@@ -1,15 +1,41 @@
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors"; // Thêm cors
+import multer from "multer";
+//check địa chỉ ảnh cũ và thay thế địa chỉ cũ 
+import fs from "fs";
+import path from "path";
+
 import { User } from "./database/database.js";
 import { Post } from "./database/database.js";
+import { Category } from "./database/database.js";
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors()); 
 app.use("/uploads", express.static("uploads"));
 
 mongoose.connect("mongodb://localhost:27017/DADN");
+
+// Cấu hình multer để upload ảnh
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    const filename = Date.now() + "-" + file.originalname;
+    const filePath = path.join("uploads", filename);
+
+    // Nếu trùng tên, xóa file cũ (cực hiếm nếu dùng timestamp, nhưng đề phòng)
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+
+    cb(null, filename);
+  },
+});
+const upload = multer({ storage });
 
 // Đăng ký
 app.post("/api/signup", async (req, res) => {
@@ -30,7 +56,7 @@ app.post("/api/signup", async (req, res) => {
       email,
       matkhau,
       avatar: "http://localhost:5000/uploads/avata-default.jpg",
-      diaChi: diaChi || null,           // Đặt null nếu không có giá trị
+      diaChi: diaChi || null,
       vaiTro,
     });
     await newUser.save();
@@ -76,15 +102,100 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
+// Cập nhật thông tin người dùng
+app.put("/api/user/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { ten, moTa, avatar } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      { ten, moTa, avatar },
+      { new: true }
+    );
+
+    if (!user) return res.status(404).json({ message: "Không tìm thấy người dùng" });
+
+    res.json({ message: "Cập nhật thành công", user });
+  } catch (error) {
+    console.error("Lỗi cập nhật người dùng:", error);
+    res.status(500).json({ message: "Lỗi server" });
+  }
+});
+
+// LẤY THÔNG TIN NGƯỜI DÙNG THEO ID
+app.get("/api/user/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: "Không tìm thấy người dùng" });
+    res.json(user);
+  } catch (error) {
+    console.error("Lỗi khi lấy người dùng:", error);
+    res.status(500).json({ message: "Lỗi server" });
+  }
+});
 
 // Danh mục
 app.get("/api/categories", async (req, res) => {
   try {
-    const danhMucList = await Post.distinct("danhMuc");
-    res.json({ danhMuc: danhMucList });
+    const danhMucList = await Category.find({});
+    res.json({ categories: danhMucList });
   } catch (err) {
-    console.error("Lỗi lấy danh mục:", err);
+    console.error("❌ Lỗi lấy danh mục:", err);
     res.status(500).json({ message: "Lỗi server khi lấy danh mục" });
+  }
+});
+
+// Bài đăng profile
+app.get('/api/mypost', async (req, res) => {
+  try {
+    const { userID } = req.query;
+
+    if (!userID) {
+      return res.status(400).json({ error: 'Thiếu userID' });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(userID)) {
+      return res.status(400).json({ error: 'userID không hợp lệ' });
+    }
+
+    const posts = await Post.find({ nguoiDang: new mongoose.Types.ObjectId(userID) })
+      .populate('nguoiDang')
+      .populate('danhMuc')
+      .sort({ thoiGianDang: -1 });
+
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error('Lỗi khi lấy bài đăng:', error);
+    res.status(500).json({ error: 'Lỗi server' });
+  }
+});
+
+// Tạo bài đăng mới
+app.post("/api/post", upload.single("hinhAnh"), async (req, res) => {
+  try {
+    const { moTa, soLuong, giaTien, tinhTrangVatDung, diaChi, danhMuc, loaiGiaoDich, trangThaiBaiDang, nguoiDang } = req.body;
+    const hinhAnh = req.file.filename;
+
+    const newPost = new Post({
+      moTa,
+      soLuong,
+      giaTien,
+      tinhTrangVatDung,
+      diaChi,
+      danhMuc,
+      loaiGiaoDich,
+      trangThaiBaiDang,
+      nguoiDang,
+      hinhAnh,
+      thoiGianCapNhat: new Date(),
+    });
+
+    await newPost.save();
+    res.json({ message: "Đăng bài thành công" });
+  } catch (error) {
+    console.error("Lỗi khi đăng bài:", error);
+    res.status(500).json({ message: "Lỗi server khi đăng bài" });
   }
 });
 

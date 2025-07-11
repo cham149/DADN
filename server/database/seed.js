@@ -1,13 +1,13 @@
 import mongoose from 'mongoose';
 import {
-  Province,
   Admin,
   User,
   Post,
   Report,
   Conversation,
-  Message
-} from './database.js'; // Đổi nếu file schema không phải là database.js
+  Message,
+  Category // ✅ Thêm Category
+} from './database.js';
 
 mongoose.connect("mongodb://localhost:27017/DADN", {
   useNewUrlParser: true,
@@ -18,7 +18,7 @@ async function seedDatabase() {
   try {
     console.log("🧹 Đang xoá dữ liệu cũ...");
     await Promise.all([
-      Province.deleteMany(),
+      Category.deleteMany(),
       Admin.deleteMany(),
       User.deleteMany(),
       Post.deleteMany(),
@@ -28,21 +28,17 @@ async function seedDatabase() {
     ]);
     console.log("✅ Đã xoá dữ liệu cũ.");
 
-    // ─── Tạo tỉnh/thành ───
-    const provinces = await Province.insertMany([
-      { maTinh: 'HN', tenTinh: 'Hà Nội' },
-      { maTinh: 'HCM', tenTinh: 'TP Hồ Chí Minh' },
-      { maTinh: 'DN', tenTinh: 'Đà Nẵng' },
-      { maTinh: 'HP', tenTinh: 'Hải Phòng' },
-      { maTinh: 'CT', tenTinh: 'Cần Thơ' },
-      { maTinh: 'QN', tenTinh: 'Quảng Ninh' }
+    // ─── Danh mục sản phẩm ───
+    const categories = await Category.insertMany([
+      { tenDanhMuc: 'Điện tử', moTa: 'Thiết bị điện tử' },
+      { tenDanhMuc: 'Thời trang', moTa: 'Quần áo, phụ kiện' },
+      { tenDanhMuc: 'Gia dụng', moTa: 'Đồ dùng trong nhà' }
     ]);
-    console.log("✅ Đã thêm tỉnh.");
+    console.log("✅ Đã tạo danh mục.");
 
-    // Lấy ID tỉnh bằng maTinh
-    const tinhHN = provinces.find(p => p.maTinh === 'HN');
-    const tinhHCM = provinces.find(p => p.maTinh === 'HCM');
-    const tinhDN = provinces.find(p => p.maTinh === 'DN');
+    const catDienTu = categories.find(c => c.tenDanhMuc === 'Điện tử');
+    const catThoiTrang = categories.find(c => c.tenDanhMuc === 'Thời trang');
+    const catGiaDung = categories.find(c => c.tenDanhMuc === 'Gia dụng');
 
     // ─── Admin ───
     const [admin1, admin2] = await Admin.insertMany([
@@ -84,9 +80,9 @@ async function seedDatabase() {
     await Post.insertMany([
       {
         nguoiDang: user1._id,
-        danhMuc: 'Điện tử',
+        danhMuc: catDienTu._id,
         tinhTrangVatDung: 'Cũ',
-        diaChi: tinhHN._id,
+        diaChi: 'Hà Nội',
         loaiGiaoDich: 'Bán',
         giaTien: 1000000,
         soLuong: 1,
@@ -95,9 +91,9 @@ async function seedDatabase() {
       },
       {
         nguoiDang: user2._id,
-        danhMuc: 'Thời trang',
+        danhMuc: catThoiTrang._id,
         tinhTrangVatDung: 'Mới',
-        diaChi: tinhHCM._id,
+        diaChi: 'TP Hồ Chí Minh',
         loaiGiaoDich: 'Cho',
         giaTien: 0,
         soLuong: 3,
@@ -106,9 +102,9 @@ async function seedDatabase() {
       },
       {
         nguoiDang: user3._id,
-        danhMuc: 'Gia dụng',
+        danhMuc: catGiaDung._id,
         tinhTrangVatDung: 'Cũ',
-        diaChi: tinhDN._id,
+        diaChi: 'Đà Nẵng',
         loaiGiaoDich: 'Bán',
         giaTien: 200000,
         soLuong: 2,
@@ -117,14 +113,14 @@ async function seedDatabase() {
       },
       {
         nguoiDang: user1._id,
-        danhMuc: 'Gia dụng',
+        danhMuc: catGiaDung._id,
         tinhTrangVatDung: 'Cũ',
-        diaChi: tinhDN._id,
+        diaChi: 'Đà Nẵng',
         loaiGiaoDich: 'Bán',
         giaTien: 150000,
         soLuong: 1,
         moTa: 'Ghế sofa bông mới 90%, 80x50x100cm',
-        hinhAnh: "https://i.pinimg.com/736x/e7/0c/ae/e70cae15753780502c14f2db168bea48.jpg"
+        hinhAnh: 'https://i.pinimg.com/736x/e7/0c/ae/e70cae15753780502c14f2db168bea48.jpg'
       }
     ]);
     console.log("✅ Đã thêm bài đăng.");
