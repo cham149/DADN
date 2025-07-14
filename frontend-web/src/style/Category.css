@@ -1,3 +1,29 @@
+.category_infor{
+  position: fixed;
+  top: 60px;
+  left: 10px;               /* hoặc khoảng lề bạn muốn */
+  width: calc(20% - 10px);  /* giống với cột category trong grid */
+  height: calc(100vh - 55px);
+  overflow-y: auto;
+}
+.category_infor::-webkit-scrollbar-track {
+  border-radius: 5px;
+}
+
+.category_infor::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+.category_infor::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Firefox */
+.category_infor {
+  scrollbar-width: thin;
+  scrollbar-color: #aeaeae #efe4d2;
+}
 .category-list{
     padding: 0;
     margin: 0;

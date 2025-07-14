@@ -146,7 +146,7 @@ app.get("/api/categories", async (req, res) => {
   }
 });
 
-// Bài đăng profile
+// Bài đăng trong profile
 app.get('/api/mypost', async (req, res) => {
   try {
     const { userID } = req.query;
@@ -196,6 +196,27 @@ app.post("/api/post", upload.single("hinhAnh"), async (req, res) => {
   } catch (error) {
     console.error("Lỗi khi đăng bài:", error);
     res.status(500).json({ message: "Lỗi server khi đăng bài" });
+  }
+});
+
+// Lấy danh sách bài đăng của nhiều người cho trang Home
+app.get("/api/posts", async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1; // Trang hiện tại
+    const limit = 10; // Số bài mỗi trang
+    const skip = (page - 1) * limit;
+
+    const posts = await Post.find({})
+      .populate("nguoiDang")
+      .populate("danhMuc")
+      .sort({ thoiGianCapNhat: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error("❌ Lỗi khi lấy bài đăng (home):", error);
+    res.status(500).json({ message: "Lỗi server khi lấy bài đăng" });
   }
 });
 

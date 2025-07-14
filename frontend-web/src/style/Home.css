@@ -3,24 +3,57 @@ body{
 }
 .body {
   display: grid;
-  grid-template-columns: 20% 50% 20%;
-  gap: 5%;
-  width: 100%;
+  grid-template-columns: 55% 20%; 
+  gap: 5.5%;                         /* khoảng cách giữa postlist và chatlist */
+  width: 100%;                      /* 50 + 5 + 20 = 75% */
+  margin-left: 20%;               /* chừa 20% bên trái cho category */
   box-sizing: border-box;
   padding: 10px;
+  
 }
 
 .category {
   margin-top: 50px;
   padding: 10px;
   box-sizing: border-box;
+  height: 95vh;
+  cursor: pointer;
+  position: fixed;
+  overflow: hidden; 
 }
+/* /////////// POST LISt ////////////////////// */
 .postlist {
   margin-top: 55px;
   padding: 10px;
-  background-color: rgb(150, 38, 26);
+  /* background-color: rgb(150, 38, 26); */
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px;
+  border: 1px solid #9e9e9e;
 }
+.postlist>.post-card .time{
+  margin-top: 8px;
+}
+.postlist>.post-card{
+  width: 80%;
+}
+.postlist .post-card .post-content b {
+  font-size: 18px;
+  width: 100px;
+}
+.postlist .post-card .info-mini b {
+  font-size: 18px;
+  width: 150px;
+}
+.postlist .post-card .post-content label {
+  font-size: 17px;
+}
+.postlist .post-card .post-image{
+  height: max-content;
+}
+/* ///////////// CHAT LIST //////////////// */
 .chatlist {
   margin-top: 55px;
   padding: 10px;

@@ -79,20 +79,20 @@ const PostCard = ({
               display: "-webkit-box",WebkitLineClamp: 2, WebkitBoxOrient: "vertical",overflow: "hidden",
               textOverflow: "ellipsis",maxHeight: "3em" 
         }}>{moTaSP}</label></div>
-        <div><b>Địa chỉ:</b><label>{diaChi}</label></div>
+        <div><b>Địa chỉ:</b><label style={{ color: 'red', fontWeight: 'bold' }}>{diaChi}</label></div>
 
         <div className="post-container-mini-content">
           <div className="info-mini">
-            <div><b>Danh mục:</b><label>{danhMuc}</label></div>
-            <div><b>Tình trạng:</b><label>{tinhTrangVatDung}</label></div>
-            <div><b>Trạng thái:</b><label>{trangThaiBaiDang}</label></div>
+            <div><b>Danh mục:</b><label style={{ color: 'red', fontWeight: 'bold' }}>{danhMuc}</label></div>
+            <div><b>Tình trạng:</b><label style={{ color: 'red', fontWeight: 'bold' }}>{tinhTrangVatDung}</label></div>
+            <div><b>Trạng thái:</b><label style={{ color: 'red', fontWeight: 'bold' }}>{trangThaiBaiDang}</label></div>
           </div>
           <div className="info-mini">
-            <div><b>Giao dịch:</b><label>{loaiGiaoDich}</label></div>
+            <div><b>Giao dịch:</b><label style={{ color: 'red', fontWeight: 'bold' }}>{loaiGiaoDich}</label></div>
             {loaiGiaoDich === "Bán" ? (
               <>
-                <div><b>Số lượng:</b><label>{soLuong}</label></div>
-                <div><b>Số tiền:</b><label  style={{ color: 'red', fontWeight: 'bold' }}>{soTien}</label></div>
+                <div><b>Số lượng:</b><label style={{ color: 'red', fontWeight: 'bold' }}>{soLuong}</label></div>
+                <div><b>Số tiền:</b><label style={{ color: 'red', fontWeight: 'bold' }}>{soTien}</label></div>
               </>
             ) : (
               <div><i>Cho ai có nhu cầu</i></div>
