@@ -46,11 +46,26 @@ const Profile = () => {
     fetchData();
   }, [user?._id]);
 
-  const handleAvatarChange = (e) => {
+  //hàm xử lý ảnh avatar
+  const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const imageURL = URL.createObjectURL(file);
-      setEditedAvatar(imageURL);
+      const formData = new FormData();
+      formData.append("avatar", file); // 'avatar' trùng tên key multer xử lý
+
+      try {
+        const res = await axios.post("http://localhost:5000/api/upload-avatar", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        });
+
+        // Nhận đường dẫn ảnh từ server và set vào avatar
+        setEditedAvatar(res.data.url);
+      } catch (err) {
+        console.error("Lỗi upload avatar:", err);
+        alert("Tải ảnh thất bại");
+      }
     }
   };
 

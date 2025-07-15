@@ -36,6 +36,16 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage });
+// Upload avatar người dùng
+app.post("/api/upload-avatar", upload.single("avatar"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: "Không có file" });
+  }
+
+  const url = `http://localhost:5000/uploads/${req.file.filename}`;
+  res.json({ url });
+});
+
 
 // Đăng ký
 app.post("/api/signup", async (req, res) => {
