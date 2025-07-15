@@ -12,11 +12,22 @@ const Home = () => {
   const [hasMore, setHasMore] = useState(true); // Kiểm tra còn bài để tải hay không
   const loaderRef = useRef(null);              // Ref cho phần tử cuối cùng để theo dõi khi scroll chạm tới
 
+  const [selectedCategory, setSelectedCategory] = useState(null); //gọi API danh mục (lọc theo danh mục)
+  //Khi danh mục thay đổi → reset bài và trang
+  const handleCategoryClick = (categoryId) => {
+    setSelectedCategory(categoryId);
+    setPage(1);       // reset trang
+    setPosts([]);     // xóa bài cũ
+    setHasMore(true); // reset hasMore để load lại
+  };
+
   // Fetch dữ liệu bài đăng
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/posts?page=${page}`);
+        const query = `page=${page}` + (selectedCategory ? `&danhMuc=${selectedCategory}` : "");
+        const res = await axios.get(`http://localhost:5000/api/posts?${query}`);
+
         console.log("📥 Dữ liệu từ server:", res.data);
 
         if (res.data.length < 10) setHasMore(false); // Nếu ít hơn 10 bài => hết dữ liệu
@@ -48,7 +59,7 @@ const Home = () => {
     };
 
     fetchPosts();
-  }, [page]);
+  }, [page, selectedCategory]);
 
   // Tự động load thêm khi cuộn đến cuối
   useEffect(() => {
@@ -68,11 +79,15 @@ const Home = () => {
     <div>
       <Header />
       <div className='body'>
-        <div className='category'><Category /></div>
+        <div className='category'><Category onCategoryClick={handleCategoryClick}/></div>
 
         <div className='postlist'>
-          {posts.map((post) => {
-            return (
+          {posts.length === 0 && !hasMore ? (
+            <p style={{ textAlign: "center", marginTop: "50px", fontWeight: "bold" }}>
+              Không có bài đăng nào
+            </p>
+          ) : (
+            posts.map((post) => (
               <PostCard
                 key={post._id}
                 avatar={post.nguoiDang?.avatar}
@@ -83,7 +98,6 @@ const Home = () => {
                   ? post.hinhAnh 
                   : `http://localhost:5000/uploads/${post.hinhAnh}`
                 }
-
                 diaChi={post.diaChi}
                 danhMuc={post.danhMuc?.tenDanhMuc}
                 tinhTrangVatDung={post.tinhTrangVatDung}
@@ -93,14 +107,16 @@ const Home = () => {
                 soTien={post.giaTien}
                 isProfilePage={false}
               />
-            );
-          })}
+            ))
+          )}
+
           {hasMore && (
             <div ref={loaderRef} style={{ textAlign: "center", padding: 20 }}>
               Đang tải thêm...
             </div>
           )}
         </div>
+
 
         <div className='chatlist'><ChatList /></div>
       </div>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../style/Category.css";
 
-const Category = () => {
+const Category = ({ onCategoryClick }) => {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
@@ -28,7 +28,7 @@ const Category = () => {
       <ul className="category-list">
         {Array.isArray(categories) ? (
           categories.map((cat) => (
-            <li key={cat._id} className="category-item">
+            <li key={cat._id} className="category-item"  onClick={() => onCategoryClick(cat._id)}>
               {cat.tenDanhMuc} {/* ✅ Chỉ hiển thị chuỗi */}
             </li>
           ))

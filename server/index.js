@@ -210,13 +210,17 @@ app.post("/api/post", upload.single("hinhAnh"), async (req, res) => {
 });
 
 // Lấy danh sách bài đăng của nhiều người cho trang Home
+// Lấy danh sách bài đăng
 app.get("/api/posts", async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1; // Trang hiện tại
-    const limit = 10; // Số bài mỗi trang
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10;
     const skip = (page - 1) * limit;
+    const danhMuc = req.query.danhMuc;
 
-    const posts = await Post.find({})
+    const filter = danhMuc ? { danhMuc } : {}; // nếu có danhMuc thì lọc
+
+    const posts = await Post.find(filter)  //dùng filter lọc danh mục ở đây
       .populate("nguoiDang")
       .populate("danhMuc")
       .sort({ thoiGianCapNhat: -1 })
