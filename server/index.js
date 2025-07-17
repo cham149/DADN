@@ -134,14 +134,26 @@ app.put("/api/user/:id", async (req, res) => {
 });
 
 // LẤY THÔNG TIN NGƯỜI DÙNG THEO ID
-app.get("/api/user/:id", async (req, res) => {
+app.get('/api/user/:id', async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).json({ message: "Không tìm thấy người dùng" });
-    res.json(user);
-  } catch (error) {
-    console.error("Lỗi khi lấy người dùng:", error);
-    res.status(500).json({ message: "Lỗi server" });
+    const { id } = req.params;
+
+    // Kiểm tra id hợp lệ
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "ID người dùng không hợp lệ" });
+    }
+
+    // Tìm người dùng theo id
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ error: "Không tìm thấy người dùng" });
+    }
+
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Lỗi server khi lấy người dùng:", err);
+    res.status(500).json({ error: "Lỗi server" });
   }
 });
 
@@ -210,17 +222,31 @@ app.post("/api/post", upload.single("hinhAnh"), async (req, res) => {
 });
 
 // Lấy danh sách bài đăng của nhiều người cho trang Home
-// Lấy danh sách bài đăng
 app.get("/api/posts", async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = 10;
     const skip = (page - 1) * limit;
-    const danhMuc = req.query.danhMuc;
 
-    const filter = danhMuc ? { danhMuc } : {}; // nếu có danhMuc thì lọc
+    const {
+      diaChi,
+      moTa,
+      tinhTrangVatDung,
+      giaTien,
+      loaiGiaoDich,
+      danhMuc
+    } = req.query;
 
-    const posts = await Post.find(filter)  //dùng filter lọc danh mục ở đây
+    const filter = {};
+
+    if (danhMuc) filter.danhMuc = danhMuc;
+    if (diaChi) filter.diaChi = { $regex: diaChi, $options: "i" };
+    if (moTa) filter.moTa = { $regex: moTa, $options: "i" };
+    if (tinhTrangVatDung) filter.tinhTrangVatDung = tinhTrangVatDung;
+    if (loaiGiaoDich) filter.loaiGiaoDich = loaiGiaoDich;
+    if (giaTien) filter.giaTien = { $lte: parseInt(giaTien) };
+
+    const posts = await Post.find(filter)
       .populate("nguoiDang")
       .populate("danhMuc")
       .sort({ thoiGianCapNhat: -1 })
@@ -229,8 +255,41 @@ app.get("/api/posts", async (req, res) => {
 
     res.status(200).json(posts);
   } catch (error) {
-    console.error("❌ Lỗi khi lấy bài đăng (home):", error);
+    console.error("❌ Lỗi khi lấy bài đăng:", error);
     res.status(500).json({ message: "Lỗi server khi lấy bài đăng" });
+  }
+});
+
+// Search toàn cục: tìm cả bài đăng và người dùng
+app.get("/api/search", async (req, res) => {
+  try {
+    const { query } = req.query;
+    if (!query) return res.status(400).json({ message: "Thiếu từ khóa tìm kiếm" });
+
+    const regex = new RegExp(query, "i");
+
+    // Tìm bài đăng theo nhiều trường
+    const posts = await Post.find({
+      $or: [
+        { moTa: regex },
+        { diaChi: regex },
+        { tinhTrangVatDung: regex },
+        { loaiGiaoDich: regex },
+        { trangThaiBaiDang: regex }
+      ]
+    })
+      .populate("nguoiDang")
+      .populate("danhMuc")
+      .limit(20)
+      .sort({ thoiGianCapNhat: -1 });
+
+    // Tìm người dùng theo tên
+    const users = await User.find({ ten: regex }).limit(10);
+
+    res.status(200).json({ posts, users });
+  } catch (error) {
+    console.error("❌ Lỗi tìm kiếm:", error);
+    res.status(500).json({ message: "Lỗi server khi tìm kiếm" });
   }
 });
 

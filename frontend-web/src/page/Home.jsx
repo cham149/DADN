@@ -5,12 +5,20 @@ import ChatList from '../components/ChatList';
 import PostCard from '../components/PostCard';
 import "../style/Home.css";
 import axios from 'axios';
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [posts, setPosts] = useState([]);      // Danh sách bài đăng đã load
   const [page, setPage] = useState(1);         // Trang hiện tại (mặc định là 1)
   const [hasMore, setHasMore] = useState(true); // Kiểm tra còn bài để tải hay không
   const loaderRef = useRef(null);              // Ref cho phần tử cuối cùng để theo dõi khi scroll chạm tới
+
+  //handle search results from Header
+  const location = useLocation();
+  const navigate = useNavigate();
+  const searchKeyword = location.state?.searchKeyword || null;
+  const searchPosts = location.state?.searchPosts || null;
+  const searchUsers = location.state?.searchUsers || null;
 
   const [selectedCategory, setSelectedCategory] = useState(null); //gọi API danh mục (lọc theo danh mục)
   //Khi danh mục thay đổi → reset bài và trang
@@ -61,6 +69,15 @@ const Home = () => {
     fetchPosts();
   }, [page, selectedCategory]);
 
+  // Reset lại kết quả tìm kiếm để hiển thị danh mục
+  useEffect(() => {
+    if (selectedCategory && searchKeyword) {
+      // Reset trạng thái tìm kiếm nếu người dùng chọn danh mục sau khi tìm kiếm
+      navigate("/", { replace: true });
+    }
+  }, [selectedCategory]);
+
+
   // Tự động load thêm khi cuộn đến cuối
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
@@ -82,41 +99,103 @@ const Home = () => {
         <div className='category'><Category onCategoryClick={handleCategoryClick}/></div>
 
         <div className='postlist'>
-          {posts.length === 0 && !hasMore ? (
-            <p style={{ textAlign: "center", marginTop: "50px", fontWeight: "bold" }}>
-              Không có bài đăng nào
-            </p>
-          ) : (
-            posts.map((post) => (
-              <PostCard
-                key={post._id}
-                avatar={post.nguoiDang?.avatar}
-                tenNguoiDung={post.nguoiDang?.ten}
-                thoiGianCapNhat={new Date(post.thoiGianCapNhat).toLocaleString()}
-                moTaSP={post.moTa}
-                anhSP={post.hinhAnh.startsWith("http") 
-                  ? post.hinhAnh 
-                  : `http://localhost:5000/uploads/${post.hinhAnh}`
-                }
-                diaChi={post.diaChi}
-                danhMuc={post.danhMuc?.tenDanhMuc}
-                tinhTrangVatDung={post.tinhTrangVatDung}
-                trangThaiBaiDang={post.trangThaiBaiDang}
-                loaiGiaoDich={post.loaiGiaoDich}
-                soLuong={post.soLuong}
-                soTien={post.giaTien}
-                isProfilePage={false}
-              />
-            ))
-          )}
+          {searchKeyword ? (
+            <>
+              <h3 style={{ padding: "10px", marginRight: "auto", marginBottom: '-3%' }}>
+                🔍 Kết quả tìm kiếm cho: <i>{searchKeyword}</i>
+              </h3>
 
-          {hasMore && (
-            <div ref={loaderRef} style={{ textAlign: "center", padding: 20 }}>
-              Đang tải thêm...
-            </div>
+              {/* Người dùng khớp */}
+              {searchUsers && searchUsers.length > 0 && (
+                <div className='container-div-user-search' style={{
+                  marginTop: "-3%", marginRight: "auto", borderBottom: "1px solid #ccc",
+                  display: "flex", gap: "10px", flexWrap: 'wrap', padding: "10px"
+                }}>
+                  <h4>👤 Người dùng khớp:</h4>
+                  {searchUsers.map((user) => (
+                    <div className='div-user-search' key={user._id}
+                      style={{
+                        marginTop: "-3%", marginRight: "auto", borderBottom: "1px solid #ccc",
+                        cursor: "pointer", display: "flex", alignItems: "center",
+                        gap: '10px', padding: '10px', borderRadius: '5px'
+                      }}
+                      onClick={() => navigate(`/profile/${user._id}`)}
+                    >
+                      <img
+                        src={user.avatar || "/default-avatar.png"}
+                        alt="avatar"
+                        className='UserAvatarSearch'
+                        style={{ width: 50, height: 50, borderRadius: "50%" }}
+                      />
+                      <span>{user.ten}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Bài đăng khớp */}
+              {searchPosts && searchPosts.length > 0 ? (
+                searchPosts.map((post) => (
+                  <PostCard key={post._id}
+                    avatar={post.nguoiDang?.avatar}
+                    tenNguoiDung={post.nguoiDang?.ten}
+                    thoiGianCapNhat={new Date(post.thoiGianCapNhat).toLocaleString()}
+                    moTaSP={post.moTa}
+                    anhSP={post.hinhAnh.startsWith("http")
+                      ? post.hinhAnh
+                      : `http://localhost:5000/uploads/${post.hinhAnh}`}
+                    diaChi={post.diaChi}
+                    danhMuc={post.danhMuc?.tenDanhMuc}
+                    tinhTrangVatDung={post.tinhTrangVatDung}
+                    trangThaiBaiDang={post.trangThaiBaiDang}
+                    loaiGiaoDich={post.loaiGiaoDich}
+                    soLuong={post.soLuong}
+                    soTien={post.giaTien}
+                    isProfilePage={false}
+                  />
+                ))
+              ) : (
+                <p style={{ textAlign: "center", marginTop: "20px" }}>
+                  Không có bài đăng nào phù hợp
+                </p>
+              )}
+            </>
+          ) : (
+            <>
+              {posts.length > 0 ? (
+                posts.map((post) => (
+                  <PostCard key={post._id}
+                    avatar={post.nguoiDang?.avatar}
+                    tenNguoiDung={post.nguoiDang?.ten}
+                    thoiGianCapNhat={new Date(post.thoiGianCapNhat).toLocaleString()}
+                    moTaSP={post.moTa}
+                    anhSP={post.hinhAnh.startsWith("http")
+                      ? post.hinhAnh
+                      : `http://localhost:5000/uploads/${post.hinhAnh}`}
+                    diaChi={post.diaChi}
+                    danhMuc={post.danhMuc?.tenDanhMuc}
+                    tinhTrangVatDung={post.tinhTrangVatDung}
+                    trangThaiBaiDang={post.trangThaiBaiDang}
+                    loaiGiaoDich={post.loaiGiaoDich}
+                    soLuong={post.soLuong}
+                    soTien={post.giaTien}
+                    isProfilePage={false}
+                  />
+                ))
+              ) : (
+                <p style={{ textAlign: "center", marginTop: "20px" }}>
+                  Không có bài đăng nào
+                </p>
+              )}
+
+              {hasMore && (
+                <div ref={loaderRef} style={{ textAlign: "center", padding: 20 }}>
+                  Đang tải thêm...
+                </div>
+              )}
+            </>
           )}
         </div>
-
 
         <div className='chatlist'><ChatList /></div>
       </div>

@@ -53,6 +53,10 @@ body{
 .postlist .post-card .post-image{
   height: max-content;
 }
+/* ------------------------------------------ */
+.div-user-search:hover{
+  background-color: #45454556;
+}
 /* ///////////// CHAT LIST //////////////// */
 .chatlist {
   margin-top: 55px;

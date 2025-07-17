@@ -75,10 +75,7 @@ const PostCard = ({
       <img src={anhSP} alt="post" className="post-image" />
 
       <div className="post-content">
-        <div><b>Mô tả:</b><label style={{height: "45px", display: "flex", alignItems: "flex-start",
-              display: "-webkit-box",WebkitLineClamp: 2, WebkitBoxOrient: "vertical",overflow: "hidden",
-              textOverflow: "ellipsis",maxHeight: "3em" 
-        }}>{moTaSP}</label></div>
+        <div><b>Mô tả:</b><label>{moTaSP}</label></div>
         <div><b>Địa chỉ:</b><label style={{ color: 'red', fontWeight: 'bold' }}>{diaChi}</label></div>
 
         <div className="post-container-mini-content">
@@ -107,3 +104,4 @@ const PostCard = ({
 };
 
 export default PostCard;
+ 

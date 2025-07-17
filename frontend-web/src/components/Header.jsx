@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../style/Header.css";
 import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -14,14 +15,33 @@ const Header = () => {
     setUser(storedUser);
   }, [location]);
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
-    console.log("Tìm kiếm:", searchQuery);
+    if (!searchQuery.trim()) return;
+
+    try {
+      const res = await axios.get(`http://localhost:5000/api/search?query=${searchQuery}`);
+      console.log("🔍 Kết quả tìm kiếm:", res.data);
+
+      navigate("/", {
+        state: {
+          searchKeyword: searchQuery,
+          searchPosts: res.data.posts,
+          searchUsers: res.data.users,
+        },
+      });
+    } catch (err) {
+      console.error("❌ Lỗi tìm kiếm:", err);
+    }
   };
 
   const handleHoSo = () => {
-    setIsDropdownOpen(false); 
-    navigate("/profile");   
+    setIsDropdownOpen(false);
+    if (user && user._id) {
+      navigate(`/profile/${user._id}`);
+    } else {
+      navigate("/profile"); // Fallback nếu không có user
+    }
   };
 
   const handleDangXuat = () => {
