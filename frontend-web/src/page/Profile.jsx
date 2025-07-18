@@ -167,7 +167,7 @@ const Profile = () => {
       setPosts(postRes.data || []);
     } catch (err) {
       console.error("Lỗi đăng bài:", err);
-      alert("Đăng bài thất bại!");
+      // alert("Đăng bài thất bại!");
     }
   };
 

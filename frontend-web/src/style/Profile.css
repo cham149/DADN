@@ -35,13 +35,13 @@
 }
 .container-avatar img{
     width: 85%;
-    height: 230px;
+    height: 245px;
     padding: 7%;
     background-color: #E5989B;
     border-radius: 30px;
 }
 .container-avatar h4 {
-    /* margin: 20px 0 0 0; */
+    margin: 10px 0 0 0;
     border: 2px solid #000;
     padding: 5px 30px;
     border-radius: 25px;

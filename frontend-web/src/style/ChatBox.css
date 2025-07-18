@@ -1,0 +1,117 @@
+.chatbox-container {
+  position: fixed;
+  bottom: 0;
+  right: 20px;
+  width: 300px;
+  height: 55%;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  z-index: 999;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chatbox-header {
+  background: #2196f3;
+  color: white;
+  padding: 5px 12px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.chatbox-header .avatar{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+.chatbox-header .close-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 30px;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+}
+
+.chatbox-body {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  background: #f5f5f5;
+  max-height: 250px;
+}
+
+.message {
+  margin-bottom: 8px;
+  max-width: 70%;
+  padding: 6px 10px;
+  border-radius: 16px;
+  word-wrap: break-word;
+}
+
+.sent {
+  background: #dcf8c6;
+  align-self: flex-end;
+}
+
+.received {
+  background: #ffffff;
+  align-self: flex-start;
+}
+
+.chatbox-input {
+  display: flex;
+  border-top: 1px solid #ddd;
+  
+}
+
+.chatbox-input input {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+}
+
+.chatbox-input button {
+  background: transparent;
+  color: #2196f3;
+  border: none;
+  padding: 0 12px;
+  cursor: pointer;
+  font-size: 28px;
+  border-radius: 0;
+}
+
+.message-wrapper {
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.sent-wrapper {
+  justify-content: flex-end;
+}
+
+.received-wrapper {
+  justify-content: flex-start;
+}
+
+.message {
+  max-width: 70%;
+  padding: 6px 10px;
+  border-radius: 16px;
+  word-wrap: break-word;
+}
+
+.sent {
+  background: #dcf8c6; /* xanh lá nhạt */
+}
+
+.received {
+  background: #ffffff; /* trắng */
+}

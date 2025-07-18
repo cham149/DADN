@@ -6,9 +6,7 @@ import multer from "multer";
 import fs from "fs";
 import path from "path";
 
-import { User } from "./database/database.js";
-import { Post } from "./database/database.js";
-import { Category } from "./database/database.js";
+import { User, Post, Category, Conversation, Message, Report, Admin } from "./database/database.js";
 
 const app = express();
 app.use(express.json());
@@ -290,6 +288,118 @@ app.get("/api/search", async (req, res) => {
   } catch (error) {
     console.error("❌ Lỗi tìm kiếm:", error);
     res.status(500).json({ message: "Lỗi server khi tìm kiếm" });
+  }
+});
+
+// //////////////////CHAT///////////////////////
+// Lấy danh sách cuộc trò chuyện của người dùng
+app.get('/api/partners/:userId', async (req, res) => {
+  try {
+    const userId = new mongoose.Types.ObjectId(req.params.userId);
+
+    // Tìm tất cả conversation có userId
+    const conversations = await Conversation.find({
+      $or: [{ nguoi1: userId }, { nguoi2: userId }]
+    });
+
+    if (conversations.length === 0) {
+      return res.status(404).json({ message: 'Không tìm thấy cuộc trò chuyện nào.' });
+    }
+
+    // Lấy danh sách người còn lại (không trùng lặp)
+    const otherUserIds = conversations.map(conv => {
+      return conv.nguoi1.equals(userId) ? conv.nguoi2 : conv.nguoi1;
+    });
+
+    // Loại bỏ trùng lặp ID
+    const uniqueUserIds = [...new Set(otherUserIds.map(id => id.toString()))];
+
+    // Truy vấn thông tin các người dùng còn lại
+    const otherUsers = await User.find({
+      _id: { $in: uniqueUserIds }
+    });
+
+    return res.json(otherUsers);
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Lỗi máy chủ.' });
+  }
+});
+
+// ✅ Thêm API find-or-create conversation
+app.post('/api/conversations/find-or-create', async (req, res) => {
+  try {
+    const { user1Id, user2Id } = req.body;
+
+    if (!user1Id || !user2Id) {
+      return res.status(400).json({ error: "Thiếu userId" });
+    }
+
+    // Đồng bộ ObjectId
+    const u1 = new mongoose.Types.ObjectId(user1Id);
+    const u2 = new mongoose.Types.ObjectId(user2Id);
+
+    // Tìm conversation đã tồn tại giữa 2 người
+    let conversation = await Conversation.findOne({
+      $or: [
+        { nguoi1: u1, nguoi2: u2 },
+        { nguoi1: u2, nguoi2: u1 }
+      ]
+    });
+
+    // Nếu chưa có thì tạo mới
+    if (!conversation) {
+      conversation = new Conversation({ nguoi1: u1, nguoi2: u2 });
+      await conversation.save();
+    }
+
+    return res.status(200).json({ conversationId: conversation._id });
+  } catch (error) {
+    console.error("Lỗi khi tìm hoặc tạo conversation:", error);
+    return res.status(500).json({ error: "Lỗi server" });
+  }
+});
+// Lấy tin nhắn của một cuộc trò chuyện
+app.get("/api/messages/:conversationId", async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(conversationId)) {
+      return res.status(400).json({ error: "ID cuộc trò chuyện không hợp lệ" });
+    }
+
+    const messages = await Message.find({ cuocTroChuyen: conversationId })
+      .populate("nguoiGui nguoiNhan")
+      .sort({ thoiGianGui: 1 });
+
+    res.status(200).json(messages);
+  } catch (error) {
+    console.error("Lỗi khi lấy tin nhắn:", error);
+    res.status(500).json({ error: "Lỗi server" });
+  }
+});
+
+// Gửi tin nhắn mới
+app.post("/api/messages", async (req, res) => {
+  try {
+    const { cuocTroChuyen, nguoiGui, nguoiNhan, noiDung } = req.body;
+
+    if (!cuocTroChuyen || !nguoiGui || !nguoiNhan || !noiDung) {
+      return res.status(400).json({ error: "Thiếu thông tin bắt buộc" });
+    }
+
+    const newMessage = new Message({
+      cuocTroChuyen,
+      nguoiGui,
+      nguoiNhan,
+      noiDung,
+    });
+
+    await newMessage.save();
+    res.status(201).json({ message: "Gửi tin nhắn thành công", message: newMessage });
+  } catch (error) {
+    console.error("Lỗi khi gửi tin nhắn:", error);
+    res.status(500).json({ error: "Lỗi server" });
   }
 });
 

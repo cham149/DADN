@@ -57,7 +57,16 @@ const Header = () => {
 
   return (
     <header className="header">
-      <div className="logo-section" onClick={() => navigate("/")}>
+        <div className="logo-section" onClick={() => {
+          navigate("/", {
+            replace: true,
+            state: {
+              searchKeyword: null,
+              searchPosts: [],
+              searchUsers: [],
+            },
+          });
+        }}>
         <i className="ri-store-2-line"></i>
         <span className="logo-text">RECAP</span>
       </div>

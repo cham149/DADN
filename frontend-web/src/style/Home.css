@@ -3,23 +3,19 @@ body{
 }
 .body {
   display: grid;
-  grid-template-columns: 55% 20%; 
-  gap: 5.5%;                         /* khoảng cách giữa postlist và chatlist */
-  width: 100%;                      /* 50 + 5 + 20 = 75% */
-  margin-left: 20%;               /* chừa 20% bên trái cho category */
-  box-sizing: border-box;
+  grid-template-columns: 20% 55% 20%;
+  gap: 2.8%;
+  width: 100%;
   padding: 10px;
-  
+  box-sizing: border-box;
 }
 
 .category {
-  margin-top: 50px;
+  margin-top: 55px;
   padding: 10px;
-  box-sizing: border-box;
   height: 95vh;
-  cursor: pointer;
-  position: fixed;
-  overflow: hidden; 
+  overflow: auto;
+  box-sizing: border-box;
 }
 /* /////////// POST LISt ////////////////////// */
 .postlist {
@@ -62,6 +58,4 @@ body{
   margin-top: 55px;
   padding: 10px;
   box-sizing: border-box;
-  background-color: rgb(222, 20, 191);
-
 }

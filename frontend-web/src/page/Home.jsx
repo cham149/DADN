@@ -9,6 +9,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [posts, setPosts] = useState([]);      // Danh sách bài đăng đã load
+  const [user, setUser] = useState([]);      
   const [page, setPage] = useState(1);         // Trang hiện tại (mặc định là 1)
   const [hasMore, setHasMore] = useState(true); // Kiểm tra còn bài để tải hay không
   const loaderRef = useRef(null);              // Ref cho phần tử cuối cùng để theo dõi khi scroll chạm tới
@@ -28,6 +29,12 @@ const Home = () => {
     setPosts([]);     // xóa bài cũ
     setHasMore(true); // reset hasMore để load lại
   };
+
+    useEffect(() => {
+      const storedUser = JSON.parse(localStorage.getItem("user"));
+      setUser(storedUser);
+      
+    }, []);
 
   // Fetch dữ liệu bài đăng
   useEffect(() => {
@@ -68,15 +75,6 @@ const Home = () => {
 
     fetchPosts();
   }, [page, selectedCategory]);
-
-  // Reset lại kết quả tìm kiếm để hiển thị danh mục
-  useEffect(() => {
-    if (selectedCategory && searchKeyword) {
-      // Reset trạng thái tìm kiếm nếu người dùng chọn danh mục sau khi tìm kiếm
-      navigate("/", { replace: true });
-    }
-  }, [selectedCategory]);
-
 
   // Tự động load thêm khi cuộn đến cuối
   useEffect(() => {
@@ -197,7 +195,11 @@ const Home = () => {
           )}
         </div>
 
-        <div className='chatlist'><ChatList /></div>
+      {user && user._id && (
+        <div className='chatlist'>
+          <ChatList userId={user._id} />
+        </div>
+      )}
       </div>
     </div>
   );
