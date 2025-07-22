@@ -1,4 +1,5 @@
 import express from "express";
+import http from "http";
 import mongoose from "mongoose";
 import cors from "cors"; // Thêm cors
 import multer from "multer";
@@ -6,12 +7,15 @@ import multer from "multer";
 import fs from "fs";
 import path from "path";
 
+import { initSocket } from "./socket.js"; 
+
+
 import { User, Post, Category, Conversation, Message, Report, Admin } from "./database/database.js";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors()); 
+app.use(cors());
 app.use("/uploads", express.static("uploads"));
 
 mongoose.connect("mongodb://localhost:27017/DADN");
@@ -396,6 +400,9 @@ app.post("/api/messages", async (req, res) => {
     });
 
     await newMessage.save();
+    // Populate để có thông tin chi tiết người gửi và nhận
+    await newMessage.populate('nguoiGui nguoiNhan');
+
     res.status(201).json({ message: "Gửi tin nhắn thành công", message: newMessage });
   } catch (error) {
     console.error("Lỗi khi gửi tin nhắn:", error);
@@ -403,4 +410,51 @@ app.post("/api/messages", async (req, res) => {
   }
 });
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+// Xoá tin nhắn theo ID
+app.delete("/api/messages/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleted = await Message.findByIdAndDelete(id);
+    if (!deleted) return res.status(404).json({ message: "Không tìm thấy tin nhắn" });
+
+    res.json({ message: "Đã xoá thành công" });
+  } catch (err) {
+    console.error("Lỗi xoá tin nhắn:", err);
+    res.status(500).json({ error: "Lỗi server" });
+  }
+});
+
+// ✅ Đánh dấu là đã đọc
+app.put("/api/messages/read-message", async (req, res) => {
+  try {
+    const { conversationId, userId } = req.body;
+
+    if (!conversationId || !userId) {
+      return res.status(400).json({ error: "Thiếu conversationId hoặc userId" });
+    }
+
+    const result = await Message.updateMany(
+      {
+        cuocTroChuyen: conversationId,
+        nguoiNhan: userId,
+        trangThai: "Chưa đọc"
+      },
+      { $set: { trangThai: "Đã đọc" } }
+    );
+
+    res.json({ message: "Đã cập nhật trạng thái", updated: result.modifiedCount });
+  } catch (err) {
+    console.error("Lỗi đánh dấu đã đọc:", err);
+    res.status(500).json({ error: "Lỗi server" });
+  }
+});
+
+
+// 🔥 Khởi tạo HTTP server từ Express app
+const server = http.createServer(app);
+// 🔌 Khởi động Socket
+initSocket(server);
+// 🚀 Lắng nghe tại cổng 5000
+server.listen(5000, () => {
+  console.log("Server + Socket đang chạy tại http://localhost:5000");
+});

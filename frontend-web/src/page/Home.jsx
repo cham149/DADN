@@ -3,6 +3,7 @@ import Header from '../components/Header';
 import Category from '../components/Category';
 import ChatList from '../components/ChatList';
 import PostCard from '../components/PostCard';
+import ChatBox from "../components/ChatBox";
 import "../style/Home.css";
 import axios from 'axios';
 import { useLocation, useNavigate } from "react-router-dom";
@@ -20,6 +21,8 @@ const Home = () => {
   const searchKeyword = location.state?.searchKeyword || null;
   const searchPosts = location.state?.searchPosts || null;
   const searchUsers = location.state?.searchUsers || null;
+
+  const [chatInfo, setChatInfo] = useState(null); // chứa conversationId và partner
 
   const [selectedCategory, setSelectedCategory] = useState(null); //gọi API danh mục (lọc theo danh mục)
   //Khi danh mục thay đổi → reset bài và trang
@@ -150,6 +153,10 @@ const Home = () => {
                     soLuong={post.soLuong}
                     soTien={post.giaTien}
                     isProfilePage={false}
+                    user={user}
+                    nguoiDang={post.nguoiDang}
+                    onOpenChat={(info) => setChatInfo(info)}
+
                   />
                 ))
               ) : (
@@ -178,6 +185,10 @@ const Home = () => {
                     soLuong={post.soLuong}
                     soTien={post.giaTien}
                     isProfilePage={false}
+                    user={user}
+                    nguoiDang={post.nguoiDang}
+                    onOpenChat={(info) => setChatInfo(info)}
+
                   />
                 ))
               ) : (
@@ -201,6 +212,16 @@ const Home = () => {
         </div>
       )}
       </div>
+        {chatInfo && user && (
+          <div style={{ position: "fixed", bottom: 20, right: 20, zIndex: 1000 }}>
+            <ChatBox
+              conversationId={chatInfo.conversationId}
+              userId={user._id}
+              partner={chatInfo.partner}
+              onClose={() => setChatInfo(null)}
+            />
+          </div>
+        )}
     </div>
   );
 };

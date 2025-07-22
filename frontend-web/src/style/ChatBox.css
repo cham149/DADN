@@ -115,3 +115,17 @@
 .received {
   background: #ffffff; /* trắng */
 }
+.message .meta {
+  font-size: 11px;
+  color: gray;
+  margin-top: 4px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.status {
+  color: red;
+  font-weight: bold;
+  margin-left: 8px;
+  font-size: 11px;
+}

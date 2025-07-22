@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import "../style/PostCard.css"; 
 import OptionMenu from "./OptionMenu";
+import axios from "axios";
 
 const PostCard = ({
   avatar,
@@ -15,10 +16,41 @@ const PostCard = ({
   loaiGiaoDich,
   soLuong,
   soTien,
-  isProfilePage
+  isProfilePage,
+  user,
+  nguoiDang,
+  onOpenChat
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef();
+
+  const handleContact = async () => {
+    console.log("🔍 user:", user);
+    console.log("🔍 nguoiDang:", nguoiDang);
+
+    if (!user || !nguoiDang || user._id === nguoiDang._id) {
+      console.log("⛔ Không thể liên hệ (user không tồn tại hoặc là người đăng)");
+      return;
+    }
+
+    try {
+      const res = await axios.post("http://localhost:5000/api/conversations/find-or-create", {
+        user1Id: user._id,
+        user2Id: nguoiDang._id
+      });
+
+      console.log("✅ Tạo hoặc tìm conversation:", res.data);
+
+      const conversationId = res.data.conversationId;
+      onOpenChat({
+        conversationId,
+        partner: nguoiDang
+      });
+    } catch (err) {
+      console.error("❌ Lỗi khi liên hệ:", err);
+      alert("Không thể liên hệ người đăng lúc này");
+    }
+  };
 
   // Click ngoài thì ẩn menu
   useEffect(() => {
@@ -98,7 +130,8 @@ const PostCard = ({
         </div>
       </div>
 
-      <button className="contact-button">liên hệ người đăng</button>
+      <button className="contact-button" onClick={handleContact}>liên hệ người đăng</button>
+
     </div>
   );
 };
