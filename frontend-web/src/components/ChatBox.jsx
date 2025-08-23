@@ -2,12 +2,13 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import socket from '../socket';
 import "../style/ChatBox.css";
+import PostCard from '../components/PostCard';
 
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
-const ChatBox = ({ conversationId, userId, partner, onClose }) => {
+const ChatBox = ({ conversationId, userId, partner, onClose, post }) => {
   const [messages, setMessages] = useState([]);
   const [newMsg, setNewMsg] = useState('');
   const messageEndRef = useRef(null);
@@ -58,7 +59,9 @@ const ChatBox = ({ conversationId, userId, partner, onClose }) => {
       cuocTroChuyen: conversationId,
       nguoiGui: userId,
       nguoiNhan: partner._id,
-      noiDung: newMsg
+      loai: "text",            //Đây là text message
+      noiDung: newMsg.trim(),  //Lấy từ input
+      postData: null           //Không cần postData
     };
 
     try {
@@ -77,7 +80,7 @@ const ChatBox = ({ conversationId, userId, partner, onClose }) => {
       console.error("Lỗi khi gửi tin nhắn:", err);
     }
   };
-  
+
   const handleRightClick = (e, msg) => {
     e.preventDefault();
 
@@ -103,7 +106,7 @@ const ChatBox = ({ conversationId, userId, partner, onClose }) => {
       conversationId,
       userId
     });
-    // Cập nhật lại state để mất chữ "chưa đọc"
+    // Cập nhật lại state cục bộ
     setMessages((prev) =>
       prev.map((msg) =>
         msg.nguoiNhan?._id === userId && msg.trangThai === "Chưa đọc"
@@ -111,6 +114,14 @@ const ChatBox = ({ conversationId, userId, partner, onClose }) => {
           : msg
       )
     );
+
+    // 🔥 Emit qua socket để thông báo real-time cho đối tác
+    socket.emit("markAsRead", {
+      conversationId,
+      userId,
+      partnerId: partner._id
+    });
+
   } catch (err) {
     console.error("Lỗi cập nhật trạng thái đã đọc:", err);
   }
@@ -132,6 +143,40 @@ useEffect(() => {
     }
   };
 
+  //LIÊN HỆ VS BÀI POST
+  useEffect(() => {
+    const sendPostPreview = async () => {
+      if (post && conversationId) {
+        try {
+          const msgToSend = {
+            cuocTroChuyen: conversationId,
+            nguoiGui: userId,
+            nguoiNhan: partner._id,
+            loai: "post",
+            noiDung: "",
+            postData: post
+          };
+
+          const res = await axios.post("http://localhost:5000/api/messages", msgToSend);
+          const savedMessage = res.data.message;
+
+          setMessages((prev) => [...prev, savedMessage]);
+
+          socket.emit("sendMessage", {
+            senderId: userId,
+            receiverId: partner._id,
+            message: savedMessage
+          });
+
+        } catch (err) {
+          console.error("Lỗi gửi tin nhắn Post:", err);
+        }
+      }
+    };
+
+    sendPostPreview();
+  }, [post, conversationId, userId, partner]);
+
   return (
     <div className="chatbox-container">
       <div className="chatbox-header">
@@ -152,17 +197,27 @@ useEffect(() => {
             <div
               key={msg._id}
               className={`message-wrapper ${isSentByMe ? 'sent-wrapper' : 'received-wrapper'}`}
-              onContextMenu={(e) => handleRightClick(e, msg)} // 👈 Bắt sự kiện click chuột phải
+              onContextMenu={(e) => handleRightClick(e, msg)}
             >
-              <div className={`message ${isSentByMe ? 'sent' : 'received'}`}>
-                <span>{msg.noiDung}</span>
-                <div className="meta">
-                  <span className="time">{dayjs(msg.thoiGianGui).fromNow()}</span>
-                  {!isSentByMe && msg.trangThai === "Chưa đọc" && (
-                    <span className="status">• Chưa đọc</span>
-                  )}
+              {msg.loai === "post" && msg.postData ? (
+                <PostCard 
+                  {...msg.postData} 
+                  user={{ _id: userId }}            
+                  nguoiDang={msg.postData.nguoiDang} 
+                  onOpenChat={() => {}}    // trong chat có thể truyền rỗng hoặc logic khác
+                />
+
+                ) : (
+                <div className={`message ${isSentByMe ? 'sent' : 'received'}`}>
+                  <span>{msg.noiDung}</span>
+                  <div className="meta">
+                    <span className="time">{dayjs(msg.thoiGianGui).fromNow()}</span>
+                    {!isSentByMe && msg.trangThai === "Chưa đọc" && (
+                      <span className="status">• Chưa đọc</span>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           );
         })}

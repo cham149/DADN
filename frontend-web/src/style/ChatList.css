@@ -21,3 +21,11 @@ flex-direction: column;
 .chatList-container li:hover {
   background-color: #a0a0a07e;
 }
+.badge {
+  background: red;
+  color: white;
+  border-radius: 50%;
+  padding: 3px 7px;
+  font-size: 12px;
+  margin-left: 8px;
+}

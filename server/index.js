@@ -386,9 +386,11 @@ app.get("/api/messages/:conversationId", async (req, res) => {
 // Gửi tin nhắn mới
 app.post("/api/messages", async (req, res) => {
   try {
-    const { cuocTroChuyen, nguoiGui, nguoiNhan, noiDung } = req.body;
+    // console.log("📩 Body nhận từ client:", req.body);   // 👈 log để kiểm tra
+    const { cuocTroChuyen, nguoiGui, nguoiNhan, noiDung, loai, postData } = req.body;
 
-    if (!cuocTroChuyen || !nguoiGui || !nguoiNhan || !noiDung) {
+    // Nếu là text thì phải có noiDung, còn post thì chỉ cần postData
+    if (!cuocTroChuyen || !nguoiGui || !nguoiNhan || (loai === "text" && !noiDung)) {
       return res.status(400).json({ error: "Thiếu thông tin bắt buộc" });
     }
 
@@ -396,16 +398,17 @@ app.post("/api/messages", async (req, res) => {
       cuocTroChuyen,
       nguoiGui,
       nguoiNhan,
-      noiDung,
+      noiDung: noiDung || "",     // text thì lấy, post thì để rỗng
+      loai: loai || "text",
+      postData: postData || null
     });
 
     await newMessage.save();
-    // Populate để có thông tin chi tiết người gửi và nhận
-    await newMessage.populate('nguoiGui nguoiNhan');
+    await newMessage.populate("nguoiGui nguoiNhan");
 
-    res.status(201).json({ message: "Gửi tin nhắn thành công", message: newMessage });
+    res.status(201).json({ message: newMessage });
   } catch (error) {
-    console.error("Lỗi khi gửi tin nhắn:", error);
+    // console.error("🔥 Chi tiết lỗi khi gửi tin nhắn:", error); // 👈 log lỗi chi tiết
     res.status(500).json({ error: "Lỗi server" });
   }
 });
@@ -445,6 +448,28 @@ app.put("/api/messages/read-message", async (req, res) => {
     res.json({ message: "Đã cập nhật trạng thái", updated: result.modifiedCount });
   } catch (err) {
     console.error("Lỗi đánh dấu đã đọc:", err);
+    res.status(500).json({ error: "Lỗi server" });
+  }
+});
+
+// Lấy số tin chưa đọc của từng partner
+app.get("/api/messages/unread/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    const unread = await Message.aggregate([
+      { $match: { nguoiNhan: new mongoose.Types.ObjectId(userId), trangThai: "Chưa đọc" } },
+      {
+        $group: {
+          _id: "$nguoiGui",
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+
+    res.json(unread); // [{ _id: "idNguoiGui", count: 3 }, ...]
+  } catch (err) {
+    console.error("Lỗi lấy số tin chưa đọc:", err);
     res.status(500).json({ error: "Lỗi server" });
   }
 });

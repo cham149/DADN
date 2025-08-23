@@ -1,44 +1,38 @@
-// socket.js
 import { Server } from "socket.io";
 
-const onlineUsers = new Map();
+let onlineUsers = {};
 
 export const initSocket = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: "http://localhost:3000",
+      origin: "http://localhost:3000",  // cho phép React client
       methods: ["GET", "POST"]
     }
   });
 
   io.on("connection", (socket) => {
-    console.log("🟢 Client connected:", socket.id);
+    console.log("🔌 User connected:", socket.id);
 
     socket.on("addUser", (userId) => {
-      onlineUsers.set(userId, socket.id);
-      console.log("📌 Online users:", Array.from(onlineUsers.entries()));
+      onlineUsers[userId] = socket.id;
+      // console.log("✅ Online users:", onlineUsers);
     });
 
-    socket.on("sendMessage", ({ senderId, receiverId, message }) => {
-      const receiverSocketId = onlineUsers.get(receiverId);
-      if (receiverSocketId) {
-        io.to(receiverSocketId).emit("receiveMessage", {
-          senderId,
-          message
+    socket.on("markAsRead", ({ conversationId, userId, partnerId }) => {
+      // console.log(`📩 User ${userId} đã đọc trong ${conversationId}`);
+      if (onlineUsers[partnerId]) {
+        io.to(onlineUsers[partnerId]).emit("updateUnread", {
+          conversationId,
+          userId
         });
       }
     });
 
     socket.on("disconnect", () => {
-      for (const [userId, sockId] of onlineUsers.entries()) {
-        if (sockId === socket.id) {
-          onlineUsers.delete(userId);
-          break;
-        }
+      for (const uid in onlineUsers) {
+        if (onlineUsers[uid] === socket.id) delete onlineUsers[uid];
       }
-      console.log("🔴 Client disconnected:", socket.id);
+      console.log("❌ User disconnected", socket.id);
     });
   });
-
-  return io;
 };

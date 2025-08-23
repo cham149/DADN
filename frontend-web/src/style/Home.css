@@ -55,7 +55,11 @@ body{
 }
 /* ///////////// CHAT LIST //////////////// */
 .chatlist {
-  margin-top: 55px;
+  position: fixed;
+  top: 55px;       /* cùng khoảng cách với category */
+  right: 0;        /* dính sát lề phải */
+  width: 20%;      /* giống grid-template-columns */
+  height: calc(100vh - 55px); /* full chiều cao trừ header */
   padding: 10px;
-  box-sizing: border-box;
+  overflow: auto;  /* nếu danh sách dài thì có scroll */
 }

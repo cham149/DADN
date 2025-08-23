@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import PostCard from '../components/PostCard';
+import ChatBox from '../components/ChatBox';
 import axios from 'axios';
 import "../style/Profile.css";
 import { useParams } from "react-router-dom";
@@ -169,6 +170,18 @@ const Profile = () => {
       console.error("Lỗi đăng bài:", err);
       // alert("Đăng bài thất bại!");
     }
+  };
+
+  //CHAT LIÊN HỆ NGƯỜI ĐĂNG (KHI VÀO TCN NGƯỜI KHÁC)
+  const [chatData, setChatData] = useState(null); 
+  // chatData = { conversationId, partner }
+
+  const handleOpenChat = ({ conversationId, partner, post }) => {
+    setChatData({ conversationId, partner, post });
+  };
+
+  const handleCloseChat = () => {
+    setChatData(null);
   };
 
   return (
@@ -420,6 +433,9 @@ const Profile = () => {
                       soLuong={post.soLuong || 1}
                       soTien={post.loaiGiaoDich === "Cho" ? "Miễn phí" : post.giaTien?.toLocaleString("vi-VN") + "₫" || ""}
                       isProfilePage={true}
+                      user={currentUser}              // truyền user hiện tại
+                      nguoiDang={post.nguoiDang}      // truyền người đăng
+                      onOpenChat={handleOpenChat}     // callback mở chat
                     />
                   ))
                 ) : (
@@ -430,8 +446,21 @@ const Profile = () => {
           </>
         ) : (
           <p style={{ textAlign: "center", padding: "20px" }}>Đang tải thông tin người dùng...</p>
+        )} 
+
+        {/* CHATBOX HIỆN CUỐI CÙNG */}
+        {chatData && (
+          <ChatBox
+            conversationId={chatData.conversationId}
+            userId={currentUser._id}
+            partner={chatData.partner}
+            post={chatData.post}
+            onClose={handleCloseChat}
+          />
         )}
+
       </div>
+
     </>
   );
 };

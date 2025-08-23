@@ -76,7 +76,9 @@ const MessageSchema = new mongoose.Schema({
   cuocTroChuyen: { type: mongoose.Schema.Types.ObjectId, ref: 'Conversation' },
   nguoiGui: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   nguoiNhan: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  noiDung: String,
+  noiDung: { type: String},
+  loai: { type: String, enum: ["text", "post"], default: "text"},
+  postData: { type: Object, default: null},
   thoiGianGui: { type: Date, default: Date.now },
   trangThai: { type: String, enum: ['Đã đọc', 'Chưa đọc'], default: 'Chưa đọc' }
 });

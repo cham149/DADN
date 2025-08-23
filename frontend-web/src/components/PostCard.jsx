@@ -25,11 +25,8 @@ const PostCard = ({
   const menuRef = useRef();
 
   const handleContact = async () => {
-    console.log("🔍 user:", user);
-    console.log("🔍 nguoiDang:", nguoiDang);
-
     if (!user || !nguoiDang || user._id === nguoiDang._id) {
-      console.log("⛔ Không thể liên hệ (user không tồn tại hoặc là người đăng)");
+      alert("⛔ Không thể liên hệ (user không tồn tại hoặc là người đăng)");
       return;
     }
 
@@ -39,12 +36,26 @@ const PostCard = ({
         user2Id: nguoiDang._id
       });
 
-      console.log("✅ Tạo hoặc tìm conversation:", res.data);
-
       const conversationId = res.data.conversationId;
+
       onOpenChat({
         conversationId,
-        partner: nguoiDang
+        partner: nguoiDang,
+        post: {
+          avatar,
+          tenNguoiDung,
+          thoiGianCapNhat,
+          moTaSP,
+          anhSP,
+          diaChi,
+          danhMuc,
+          tinhTrangVatDung,
+          trangThaiBaiDang,
+          loaiGiaoDich,
+          soLuong,
+          soTien,
+          nguoiDang
+        }
       });
     } catch (err) {
       console.error("❌ Lỗi khi liên hệ:", err);

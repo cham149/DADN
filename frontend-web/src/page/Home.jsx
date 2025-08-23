@@ -155,7 +155,7 @@ const Home = () => {
                     isProfilePage={false}
                     user={user}
                     nguoiDang={post.nguoiDang}
-                    onOpenChat={(info) => setChatInfo(info)}
+                    onOpenChat={(info) => setChatInfo(...info, post)}
 
                   />
                 ))
@@ -206,7 +206,7 @@ const Home = () => {
           )}
         </div>
 
-      {user && user._id && (
+        {user && user._id && (
         <div className='chatlist'>
           <ChatList userId={user._id} />
         </div>
@@ -219,6 +219,7 @@ const Home = () => {
               userId={user._id}
               partner={chatInfo.partner}
               onClose={() => setChatInfo(null)}
+              post={chatInfo.post}   
             />
           </div>
         )}
