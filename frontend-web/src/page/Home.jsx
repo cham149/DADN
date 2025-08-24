@@ -138,6 +138,8 @@ const Home = () => {
               {searchPosts && searchPosts.length > 0 ? (
                 searchPosts.map((post) => (
                   <PostCard key={post._id}
+                    postId={post._id}
+                    trangThaiBaoCao={post.trangThaiBaoCao}
                     avatar={post.nguoiDang?.avatar}
                     tenNguoiDung={post.nguoiDang?.ten}
                     thoiGianCapNhat={new Date(post.thoiGianCapNhat).toLocaleString()}
@@ -170,6 +172,8 @@ const Home = () => {
               {posts.length > 0 ? (
                 posts.map((post) => (
                   <PostCard key={post._id}
+                    postId={post._id}
+                    trangThaiBaoCao={post.trangThaiBaoCao}
                     avatar={post.nguoiDang?.avatar}
                     tenNguoiDung={post.nguoiDang?.ten}
                     thoiGianCapNhat={new Date(post.thoiGianCapNhat).toLocaleString()}

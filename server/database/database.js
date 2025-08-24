@@ -22,7 +22,8 @@ const UserSchema = new mongoose.Schema({
   trangThai: { type: String, enum: ['Khóa', 'Mở'], default: 'Mở' },
   ngayTao: { type: Date, default: Date.now },
   ngayCapNhat: { type: Date, default: Date.now },
-  moTa: { type: String, default: '' }
+  moTa: { type: String, default: '' },
+  soBaiVietBiKhoa: { type: Number, default: 0 } 
 });
 export const User = mongoose.model('User', UserSchema);
 
@@ -39,7 +40,10 @@ const PostSchema = new mongoose.Schema({
   trangThaiBaiDang: { type: String, enum: ['Đã bán', 'Đã cho', 'Còn'], default: 'Còn' },
   soLuong: Number,
   moTa: String,
-  hinhAnh: String
+  hinhAnh: String,
+  soLuotBaoCao: { type: Number, default: 0 },
+  trangThaiBaoCao: { type: String, enum: ['Bình thường', 'Chờ duyệt', 'Đã khóa'], default: 'Bình thường' }
+
 });
 export const Post = mongoose.model('Post', PostSchema);
 

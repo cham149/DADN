@@ -45,7 +45,8 @@ async function seedDatabase() {
       'Sách Vở',
       'Thể Thao',
       'Thiết Bị',
-      'Trang Sức'
+      'Trang Sức',
+      'Trang trí'
     ];
 
     const categoryObjects = categoryList.map(name => ({
@@ -74,26 +75,29 @@ async function seedDatabase() {
       {
         ten: 'Nguyễn Văn A',
         email: 'a@example.com',
-        matkhau: 'pass123',
+        matkhau: 'Ac111@',
         vaiTro: 'Cá nhân',
         avatar: 'https://i.pinimg.com/1200x/e2/49/26/e249268827c30931ca310fab758f3385.jpg',
-        moTa: 'Thích đồ công nghệ'
+        moTa: 'Thích đồ công nghệ',
+        soBaiVietBiKhoa: 0
       },
       {
         ten: 'Trần Thị B',
         email: 'b@example.com',
-        matkhau: 'pass456',
+        matkhau: 'Ac111@',
         vaiTro: 'Trang',
         avatar: 'https://i.pinimg.com/736x/5a/38/c4/5a38c4765a98cc2529997478ab9d5e54.jpg',
-        moTa: 'Bán thời trang, mỹ phẩm'
+        moTa: 'Bán thời trang, mỹ phẩm',
+        soBaiVietBiKhoa: 0
       },
       {
         ten: 'Lê Văn C',
         email: 'c@example.com',
-        matkhau: 'pass789',
+        matkhau: 'Ac111@',
         vaiTro: 'Cá nhân',
         avatar: 'https://i.pinimg.com/1200x/42/e3/35/42e335ef34ef9d4d30babbb8c26f535e.jpg',
-        moTa: 'Tìm đồ thanh lý rẻ'
+        moTa: 'Tìm đồ thanh lý rẻ',
+        soBaiVietBiKhoa: 0
       }
     ]);
     console.log("✅ Đã tạo người dùng.");
@@ -109,7 +113,10 @@ async function seedDatabase() {
         giaTien: 1000000,
         soLuong: 1,
         moTa: 'Laptop cũ, dùng tốt',
-        hinhAnh: 'https://i.pinimg.com/1200x/76/1b/f3/761bf384668e9f7964807c56abb90303.jpg'
+        hinhAnh: 'https://i.pinimg.com/1200x/76/1b/f3/761bf384668e9f7964807c56abb90303.jpg',
+        soLuotBaoCao: 0,
+        trangThaiBaoCao: 'Bình thường'
+
       },
       {
         nguoiDang: user2._id,
@@ -120,7 +127,9 @@ async function seedDatabase() {
         giaTien: 0,
         soLuong: 3,
         moTa: 'Áo thun mới, size M L',
-        hinhAnh: 'https://i.pinimg.com/1200x/05/b6/51/05b6515f740ce8ffc3d2060c2950953b.jpg'
+        hinhAnh: 'https://i.pinimg.com/1200x/05/b6/51/05b6515f740ce8ffc3d2060c2950953b.jpg',
+        soLuotBaoCao: 0,
+        trangThaiBaoCao: 'Bình thường'
       },
       {
         nguoiDang: user3._id,
@@ -131,7 +140,9 @@ async function seedDatabase() {
         giaTien: 200000,
         soLuong: 2,
         moTa: 'Nồi cơm điện cũ, còn tốt',
-        hinhAnh: 'https://i.pinimg.com/736x/58/ac/9a/58ac9a11a747239ea70cf2c519d26f53.jpg'
+        hinhAnh: 'https://i.pinimg.com/736x/58/ac/9a/58ac9a11a747239ea70cf2c519d26f53.jpg',
+        soLuotBaoCao: 0,
+        trangThaiBaoCao: 'Bình thường'
       },
       {
         nguoiDang: user1._id,
@@ -142,7 +153,9 @@ async function seedDatabase() {
         giaTien: 150000,
         soLuong: 1,
         moTa: 'Ghế sofa bông mới 90%, 80x50x100cm',
-        hinhAnh: 'https://i.pinimg.com/736x/e7/0c/ae/e70cae15753780502c14f2db168bea48.jpg'
+        hinhAnh: 'https://i.pinimg.com/736x/e7/0c/ae/e70cae15753780502c14f2db168bea48.jpg',
+        soLuotBaoCao: 0,
+        trangThaiBaoCao: 'Bình thường'
       }
     ]);
     console.log("✅ Đã thêm bài đăng.");

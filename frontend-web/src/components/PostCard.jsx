@@ -19,7 +19,13 @@ const PostCard = ({
   isProfilePage,
   user,
   nguoiDang,
-  onOpenChat
+  onOpenChat,
+  postId,
+  trangThaiBaoCao,
+  onPostDeleted,
+  onStartEdit,
+  // Lấy toàn bộ object post để truyền đi khi sửa
+  postObject 
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef();
@@ -27,7 +33,7 @@ const PostCard = ({
   const handleContact = async () => {
     if (!user || !nguoiDang || user._id === nguoiDang._id) {
       alert("⛔ Không thể liên hệ (user không tồn tại hoặc là người đăng)");
-      return;
+      return;zz
     }
 
     try {
@@ -54,7 +60,7 @@ const PostCard = ({
           loaiGiaoDich,
           soLuong,
           soTien,
-          nguoiDang
+          nguoiDang,
         }
       });
     } catch (err) {
@@ -75,19 +81,62 @@ const PostCard = ({
   }, []);
 
   const handleEdit = () => {
-    alert("Sửa bài đăng!");
+    // Gọi hàm từ component cha, truyền toàn bộ dữ liệu bài viết lên
+    onStartEdit(postObject); 
   };
 
-  const handleDelete = () => {
-    alert("Xóa bài đăng!");
+  // ▼▼▼ SỬA LẠI HÀM NÀY ▼▼▼
+  const handleDelete = async () => {
+    // Thêm bước xác nhận để an toàn
+    if (!window.confirm("Bạn có chắc chắn muốn xóa bài đăng này không?")) {
+      return;
+    }
+
+    try {
+      // Gọi API xóa từ backend
+      const res = await axios.delete(`http://localhost:5000/api/posts/${postId}`, {
+        // Gửi kèm userId trong body để backend xác thực quyền
+        data: { userId: user._id } 
+      });
+
+      alert(res.data.message);
+      // Gọi hàm từ component cha để xóa bài viết khỏi giao diện
+      onPostDeleted(postId);
+
+    } catch (error) {
+      alert(error.response?.data?.message || "Xóa bài đăng thất bại.");
+    }
   };
 
-  const handleReport = (reason) => {
-    alert(`Đã gửi báo cáo với lý do: ${reason}`);
+  const handleReport = async (reason) => {
+    if (!user) {
+      alert("Bạn cần đăng nhập để thực hiện chức năng này.");
+      return;
+    }
+    if (!postId) {
+      alert("Lỗi: Không tìm thấy ID bài viết.");
+      return;
+    }
+
+    try {
+      const res = await axios.post(`http://localhost:5000/api/posts/${postId}/report`, {
+        nguoiBaoCaoId: user._id,
+        lyDo: reason,
+      });
+      alert(res.data.message); // Hiển thị thông báo từ server
+      setShowMenu(false); // Ẩn menu sau khi báo cáo
+    } catch (error) {
+      // Hiển thị lỗi từ server nếu có (ví dụ: "Bạn đã báo cáo bài này rồi")
+      alert(error.response?.data?.message || "Gửi báo cáo thất bại.");
+    }
   };
+
+  // --- QUY TẮC 4: Bài viết bị làm mờ xám trên trang cá nhân của chủ bài ---
+  const isOwner = user?._id === nguoiDang?._id;
+  const isPendingAndOwnerViewing = trangThaiBaoCao === 'Chờ duyệt' && isProfilePage && isOwner;
 
   return (
-    <div className="post-card">
+    <div className={`post-card ${isPendingAndOwnerViewing ? 'pending-review' : ''}`}>
       <div className="post-header">
         <img src={avatar} className="avatar" />
         <div style={{ flex: "3" }}>

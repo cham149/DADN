@@ -40,6 +40,9 @@ const Profile = () => {
     "Tây Ninh", "Thanh Hóa", "Thái Nguyên", "Tuyên Quang", "Vĩnh Long"
   ];
 
+    // ▼▼▼ THÊM STATE MỚI ĐỂ QUẢN LÝ VIỆC SỬA BÀI ▼▼▼
+  const [editingPost, setEditingPost] = useState(null); // null: tạo mới, object: đang sửa
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -80,6 +83,100 @@ const Profile = () => {
 
     fetchData();
   }, [userID]);
+
+  //SỬA/XÓA BÀI VIẾT
+    const handlePostDeleted = (deletedPostId) => {
+      // Cập nhật lại state 'posts' bằng cách lọc ra bài đăng vừa bị xóa
+      setPosts(currentPosts => currentPosts.filter(post => post._id !== deletedPostId));
+      alert("Đã xóa bài đăng khỏi giao diện."); // Thông báo cho người dùng
+  };
+
+  // HÀM BẮT ĐẦU CHẾ ĐỘ CHỈNH SỬA BÀI ĐĂNG (TRUYỀN VÀO PostCard)
+  const handleStartEdit = (postToEdit) => {
+      setEditingPost(postToEdit); // Lưu lại thông tin bài đăng đang được sửa
+
+      // Điền thông tin cũ của bài viết vào các state của form
+      setMoTa(postToEdit.moTa || "");
+      setSoLuong(postToEdit.soLuong?.toString() || "");
+      setGiaTien(postToEdit.giaTien?.toString() || "");
+      setTinhTrang(postToEdit.tinhTrangVatDung || "Mới");
+      setDiaChiPost(postToEdit.diaChi || "");
+      setChonDanhMuc(postToEdit.danhMuc?._id || "");
+      setTransactionType(postToEdit.loaiGiaoDich || "Bán");
+      setTrangThaiBaiDang(postToEdit.trangThaiBaiDang || "Còn");
+      
+      // Cập nhật ảnh preview
+      const imageUrl = postToEdit.hinhAnh?.startsWith("http") 
+          ? postToEdit.hinhAnh 
+          : `http://localhost:5000/uploads/${postToEdit.hinhAnh}`;
+      setSelectedImagePreview(imageUrl);
+      setSelectedImage(null); // Reset file ảnh mới, vì người dùng có thể không muốn đổi ảnh
+
+      setShowUploadForm(true); // Hiển thị form chỉnh sửa
+      window.scrollTo(0, 0); // Tự động cuộn lên đầu trang để người dùng thấy form
+  };
+
+    // ▼▼▼ HÀM MỚI: ĐÓNG VÀ RESET FORM ▼▼▼
+  const resetAndCloseForm = () => {
+    setShowUploadForm(false);
+    setEditingPost(null);
+    setMoTa("");
+    setSoLuong("");
+    setGiaTien("");
+    setTinhTrang("Mới");
+    setDiaChiPost("");
+    setTrangThaiBaiDang("Còn");
+    setTransactionType("Bán");
+    setChonDanhMuc("");
+    setSelectedImage(null);
+    setSelectedImagePreview("");
+  };
+
+  // ▼▼▼ CẬP NHẬT: HÀM NÀY GIỜ XỬ LÝ CẢ TẠO MỚI VÀ CẬP NHẬT ▼▼▼
+  const handleFormSubmit = async () => {
+    if (!currentUser?._id) {
+      alert("Vui lòng đăng nhập để thực hiện.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("moTa", moTa);
+    formData.append("soLuong", soLuong);
+    formData.append("giaTien", transactionType === 'Cho' ? 0 : giaTien);
+    formData.append("tinhTrangVatDung", tinhTrang);
+    formData.append("diaChi", diaChiPost);
+    formData.append("danhMuc", chonDanhMuc);
+    formData.append("loaiGiaoDich", transactionType);
+    formData.append("trangThaiBaiDang", trangThai);
+    formData.append("nguoiDang", currentUser._id);
+    if (selectedImage) {
+      formData.append("hinhAnh", selectedImage);
+    }
+
+    try {
+      if (editingPost) {
+        // --- CHẾ ĐỘ SỬA ---
+        const res = await axios.put(`http://localhost:5000/api/posts/${editingPost._id}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        alert(res.data.message);
+      } else {
+        // --- CHẾ ĐỘ TẠO MỚI ---
+        const res = await axios.post("http://localhost:5000/api/post", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        alert(res.data.message);
+      }
+
+      resetAndCloseForm();
+      // Tải lại danh sách bài đăng để cập nhật giao diện
+      const postRes = await axios.get(`http://localhost:5000/api/mypost?userID=${currentUser._id}`);
+      setPosts(postRes.data || []);
+    } catch (err) {
+      alert(err.response?.data?.message || "Thao tác thất bại!");
+      console.error("Lỗi khi gửi form:", err);
+    }
+  };
 
   const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
@@ -124,51 +221,6 @@ const Profile = () => {
     if (file) {
       setSelectedImage(file);
       setSelectedImagePreview(URL.createObjectURL(file));
-    }
-  };
-
-  const handlePost = async () => {
-    try {
-      if (!user?._id) {
-        alert("Không có ID người dùng để đăng bài");
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append("hinhAnh", selectedImage);
-      formData.append("moTa", moTa);
-      formData.append("soLuong", soLuong);
-      formData.append("giaTien", giaTien);
-      formData.append("tinhTrangVatDung", tinhTrang);
-      formData.append("diaChi", diaChiPost);
-      formData.append("danhMuc", chonDanhMuc);
-      formData.append("loaiGiaoDich", transactionType);
-      formData.append("trangThaiBaiDang", trangThai);
-      formData.append("nguoiDang", user._id);
-
-      await axios.post("http://localhost:5000/api/post", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        timeout: 5000,
-      });
-
-      alert("Đăng bài thành công!");
-      setShowUploadForm(false);
-      setMoTa("");
-      setSoLuong("");
-      setGiaTien("");
-      setTinhTrang("Mới");
-      setDiaChiPost("");
-      setTrangThai("Còn");
-      setTransactionType("Bán");
-      setChonDanhMuc("");
-      setSelectedImage(null);
-      setSelectedImagePreview("");
-
-      const postRes = await axios.get(`http://localhost:5000/api/mypost?userID=${user._id}`, { timeout: 5000 });
-      setPosts(postRes.data || []);
-    } catch (err) {
-      console.error("Lỗi đăng bài:", err);
-      // alert("Đăng bài thất bại!");
     }
   };
 
@@ -275,14 +327,15 @@ const Profile = () => {
                 <button
                   onClick={() => {
                     console.log("Toggle upload form, current state:", !showUploadForm);
-                    setShowUploadForm(!showUploadForm);
+                    setEditingPost(null); 
+                    setShowUploadForm(true);
                   }}
                 >
                   Bạn muốn đăng gì ?
                 </button>
               </div>)}
 
-              {isOwnProfile && showUploadForm && (
+              {isOwnProfile && showUploadForm && ( //FORM ĐĂNG/SỬA BÀI VIẾT
                 <div className='container-upload-post-detail'>
                   <div className='container-upload-post-detail-left'>
                     <img
@@ -401,10 +454,11 @@ const Profile = () => {
                         </div>
                       )}
                       <div id='div-right' style={{justifyContent: "flex-end" }}>
-                        <button
-                          onClick={handlePost}
-                        >
-                          Đăng
+                        <button onClick={handleFormSubmit}>
+                            {editingPost ? 'Lưu thay đổi' : 'Đăng'}
+                        </button>
+                        <button onClick={resetAndCloseForm} style={{ marginLeft: '10px', backgroundColor: '#6c757d' }}>
+                            Hủy
                         </button>
                       </div>
                     </div>
@@ -420,6 +474,8 @@ const Profile = () => {
                   posts.map((post) => (
                     <PostCard
                       key={post._id}
+                      postId={post._id} 
+                      trangThaiBaoCao={post.trangThaiBaoCao}
                       avatar={post.nguoiDang?.avatar || "/default-avatar.png"}
                       tenNguoiDung={post.nguoiDang?.ten || "Người dùng"}
                       thoiGianCapNhat={new Date(post.thoiGianCapNhat).toLocaleString()}
@@ -436,6 +492,11 @@ const Profile = () => {
                       user={currentUser}              // truyền user hiện tại
                       nguoiDang={post.nguoiDang}      // truyền người đăng
                       onOpenChat={handleOpenChat}     // callback mở chat
+                      //Các props quan trọng cho việc Sửa/Xóa
+                      postObject={post}
+                      onPostDeleted={handlePostDeleted}
+                      onStartEdit={handleStartEdit}
+
                     />
                   ))
                 ) : (

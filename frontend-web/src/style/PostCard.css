@@ -86,3 +86,14 @@
   cursor: pointer;
   border-radius: 6px;
 }
+.post-card.pending-review {
+  filter: grayscale(80%); /* Chuyển sang màu xám */
+  opacity: 0.6;          /* Làm mờ */
+  border: 2px dashed #f0ad4e; /* Thêm viền để dễ nhận biết */
+  pointer-events: none;      /* Vô hiệu hóa tương tác */
+}
+
+/* Cho phép menu vẫn hoạt động */
+.post-card.pending-review .menu-wrapper {
+    pointer-events: auto;
+}
