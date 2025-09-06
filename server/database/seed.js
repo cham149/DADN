@@ -65,8 +65,10 @@ async function seedDatabase() {
 
     // ─── Admin ───
     const [admin1, admin2] = await Admin.insertMany([
-      { ten: 'Admin 1', email: 'admin1@example.com', matkhau: 'admin123' },
-      { ten: 'Admin 2', email: 'admin2@example.com', matkhau: 'admin456' }
+      { ten: 'Admin 1', email: 'admin1@example.com',
+        matkhau: 'admin123' },
+      { ten: 'Admin 2', email: 'admin2@example.com',
+        matkhau: 'admin456' }
     ]);
     console.log("✅ Đã tạo admin.");
 
@@ -94,6 +96,15 @@ async function seedDatabase() {
         ten: 'Lê Văn C',
         email: 'c@example.com',
         matkhau: 'Ac111@',
+        vaiTro: 'Cá nhân',
+        avatar: 'https://i.pinimg.com/1200x/42/e3/35/42e335ef34ef9d4d30babbb8c26f535e.jpg',
+        moTa: 'Tìm đồ thanh lý rẻ',
+        soBaiVietBiKhoa: 0
+      },
+      {
+        ten: 'cham',
+        email: 'cham@example.com',
+        matkhau: 'Ac123@',
         vaiTro: 'Cá nhân',
         avatar: 'https://i.pinimg.com/1200x/42/e3/35/42e335ef34ef9d4d30babbb8c26f535e.jpg',
         moTa: 'Tìm đồ thanh lý rẻ',
@@ -218,6 +229,57 @@ async function seedDatabase() {
         trangThai: 'Chưa đọc'
       }
     ]);
+
+    // Lấy các bài viết để tạo report
+const posts = await Post.find();
+
+// Tạo report
+await Report.insertMany([
+  {
+    nguoiBaoCao: user2._id,
+    nguoiBiBaoCao: user1._id,
+    baiBiBaoCao: posts[0]._id,
+    lyDo: 'Lừa đảo',
+    trangThai: 'Đang xử lý'
+  },
+  {
+    nguoiBaoCao: user3._id,
+    nguoiBiBaoCao: user1._id,
+    baiBiBaoCao: posts[0]._id,
+    lyDo: 'Thông tin không chính xác',
+    trangThai: 'Đang xử lý'
+  },
+  {
+    nguoiBaoCao: user1._id,
+    nguoiBiBaoCao: user2._id,
+    baiBiBaoCao: posts[1]._id,
+    lyDo: 'Bán hàng cấm',
+    trangThai: 'Đang xử lý'
+  },
+  {
+    nguoiBaoCao: user3._id,
+    nguoiBiBaoCao: user1._id,
+    baiBiBaoCao: posts[2]._id,
+    lyDo: 'Spam',
+    trangThai: 'Đang xử lý'
+  },
+  {
+    nguoiBaoCao: user2._id,
+    nguoiBiBaoCao: user1._id,
+    baiBiBaoCao: posts[2]._id,
+    lyDo: 'Gian lận',
+    trangThai: 'Đang xử lý'
+  },
+  {
+    nguoiBaoCao: user3._id,
+    nguoiBiBaoCao: user1._id,
+    baiBiBaoCao: posts[2]._id,
+    lyDo: 'Lừa đảo',
+    trangThai: 'Đang xử lý'
+  }
+]);
+console.log("✅ Đã thêm dữ liệu báo cáo.");
+
 
     console.log("✅ Đã thêm tin nhắn.");
 

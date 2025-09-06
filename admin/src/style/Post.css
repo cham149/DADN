@@ -1,0 +1,49 @@
+.post-header{
+    height: 40px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+    padding: 10px 15px;
+    font-size: 20px;
+    background-color: #D9D9D9;
+}
+.post-header>label{
+    color: #707070;
+}
+.post-header-search>input{
+    width: 300px;
+    height: 25px;
+    border-radius: 50px;
+    padding: 5px 10px;
+    font-size: 15px;
+}
+.post-header-button{
+    background-color: #52B179;
+    color: #fff;
+    height: 100%;
+    border: 0;
+    padding: 0 15px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.post-header-button:hover{
+    background-color: #1fa055;
+}
+.post-body{
+    display: flex;
+    flex-wrap: wrap;          
+    justify-content: flex-start;  
+    gap: 38px;              
+    padding: 20px 5%;     
+    background-color: #FFF2E0 ;
+  
+}
+.category-list, .type-of-transaction{
+    background-color: #D9D9D9;
+    font-weight: bold;
+    font-family: cursive;
+    padding: 10px 18px;
+    border-radius: 15px;
+    cursor: pointer;
+}

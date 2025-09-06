@@ -8,8 +8,8 @@ const AdminSchema = new mongoose.Schema({
   ten: String,
   email: { type: String, unique: true },
   matkhau: String,
-  ngayTao: { type: Date, default: Date.now }
-});
+}, { timestamps: { createdAt: 'ngayTao'}});
+
 export const Admin = mongoose.model('Admin', AdminSchema);
 
 // ───── Người dùng ─────
@@ -20,11 +20,9 @@ const UserSchema = new mongoose.Schema({
   vaiTro: { type: String, enum: ['Trang', 'Cá nhân'] },
   avatar: String,
   trangThai: { type: String, enum: ['Khóa', 'Mở'], default: 'Mở' },
-  ngayTao: { type: Date, default: Date.now },
-  ngayCapNhat: { type: Date, default: Date.now },
   moTa: { type: String, default: '' },
   soBaiVietBiKhoa: { type: Number, default: 0 } 
-});
+}, { timestamps: { createdAt: 'ngayTao', updatedAt: 'ngayCapNhat' }});
 export const User = mongoose.model('User', UserSchema);
 
 // ───── Bài đăng ─────

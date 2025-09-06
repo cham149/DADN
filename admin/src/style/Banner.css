@@ -1,0 +1,19 @@
+.banner{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5%;
+    background-color: #FFF2E0;
+    padding: 20px 0;
+}
+.banner>img{
+    max-width: 500px;
+    border-radius: 25px;    
+}
+.banner>p{
+    font-size: 38px;
+    max-width: 250px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: #707070;
+    text-shadow: 3px 3px 5px rgba(128, 128, 128, 0.4); 
+}
