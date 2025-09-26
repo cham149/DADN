@@ -230,55 +230,32 @@ async function seedDatabase() {
       }
     ]);
 
-    // Lấy các bài viết để tạo report
-const posts = await Post.find();
 
-// Tạo report
-await Report.insertMany([
+// ─── User có bài viết bị khóa ───
+const [user4, user5] = await User.insertMany([
   {
-    nguoiBaoCao: user2._id,
-    nguoiBiBaoCao: user1._id,
-    baiBiBaoCao: posts[0]._id,
-    lyDo: 'Lừa đảo',
-    trangThai: 'Đang xử lý'
+    ten: 'Nguyễn Văn D',
+    email: 'd@example.com',
+    matkhau: 'Ac111@',
+    vaiTro: 'Cá nhân',
+    avatar: 'https://i.pinimg.com/736x/5a/38/c4/5a38c4765a98cc2529997478ab9d5e54.jpg',
+    moTa: 'Đã bị khóa 2 bài viết',
+    soBaiVietBiKhoa: 2,
+    trangThai: 'Mở'
   },
   {
-    nguoiBaoCao: user3._id,
-    nguoiBiBaoCao: user1._id,
-    baiBiBaoCao: posts[0]._id,
-    lyDo: 'Thông tin không chính xác',
-    trangThai: 'Đang xử lý'
-  },
-  {
-    nguoiBaoCao: user1._id,
-    nguoiBiBaoCao: user2._id,
-    baiBiBaoCao: posts[1]._id,
-    lyDo: 'Bán hàng cấm',
-    trangThai: 'Đang xử lý'
-  },
-  {
-    nguoiBaoCao: user3._id,
-    nguoiBiBaoCao: user1._id,
-    baiBiBaoCao: posts[2]._id,
-    lyDo: 'Spam',
-    trangThai: 'Đang xử lý'
-  },
-  {
-    nguoiBaoCao: user2._id,
-    nguoiBiBaoCao: user1._id,
-    baiBiBaoCao: posts[2]._id,
-    lyDo: 'Gian lận',
-    trangThai: 'Đang xử lý'
-  },
-  {
-    nguoiBaoCao: user3._id,
-    nguoiBiBaoCao: user1._id,
-    baiBiBaoCao: posts[2]._id,
-    lyDo: 'Lừa đảo',
-    trangThai: 'Đang xử lý'
+    ten: 'Trần Thị E',
+    email: 'e@example.com',
+    matkhau: 'Ac111@',
+    vaiTro: 'Cá nhân',
+    avatar: 'https://i.pinimg.com/1200x/42/e3/35/42e335ef34ef9d4d30babbb8c26f535e.jpg',
+    moTa: 'Đã bị khóa 3 bài viết',
+    soBaiVietBiKhoa: 3,
+    trangThai: 'Mở'
   }
 ]);
-console.log("✅ Đã thêm dữ liệu báo cáo.");
+
+console.log("✅ Đã tạo thêm user có bài viết bị khóa.");
 
 
     console.log("✅ Đã thêm tin nhắn.");

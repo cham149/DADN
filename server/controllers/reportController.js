@@ -36,7 +36,7 @@ export const reportPost = async (req, res) => {
     post.soLuotBaoCao += 1;
 
     if (post.soLuotBaoCao >= 3) {
-      post.trangThaiBaoCao = "Chờ duyệt";
+      post.trangThaiBaoCao = "Đang xử lý";
     }
 
     await post.save();

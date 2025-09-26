@@ -1,11 +1,23 @@
 import express from "express";
-import { getPendingPosts, lockPost, rejectReports, getAdminList } from "../controllers/reportedController.js"; // Import getAdminList
+import {
+  getReportedPosts,
+  approveReport,
+  rejectReport,
+  lockUser,
+  unlockUser,
+  getUsersWithLockedPosts
+} from "../controllers/reportedController.js";
 
 const router = express.Router();
 
-router.get("/admin/list", getAdminList); // Thêm route này
-router.get("/admin/pending-posts", getPendingPosts);
-router.post("/admin/posts/:postId/lock", lockPost);
-router.post("/admin/posts/:postId/reject", rejectReports);
+// ───── Reported Posts ─────
+router.get("/admin/reported-posts", getReportedPosts);            
+router.post("/admin/reports/:reportId/approve", approveReport);    
+router.post("/admin/reports/:reportId/reject", rejectReport);     
+
+// ───── Users ─────
+router.put("/user/:userId/lock", lockUser);                       
+router.put("/user/:userId/unlock", unlockUser);                   
+router.get("/users/locked-posts", getUsersWithLockedPosts);       
 
 export default router;

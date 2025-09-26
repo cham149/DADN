@@ -4,6 +4,7 @@ import category from "./categories.js";
 import post from "./post.js";
 import chat from "./chat.js";
 import report from "./report.js";
+import reported from "./reported.js";
 import admin from "./admin.js";
 
 const configure = (app) => {
@@ -13,6 +14,7 @@ const configure = (app) => {
   app.use("/api", post);
   app.use("/api", chat);
   app.use("/api", report);
+  app.use("/api", reported);
   app.use("/api", admin);
 };
 

@@ -48,7 +48,7 @@ const Header = () => {
     localStorage.removeItem("user");
     setIsDropdownOpen(false);
     setUser(null);
-    navigate("/");
+    navigate("/Login");
   };
 
   const handleLoginRedirect = () => {

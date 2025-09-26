@@ -92,8 +92,3 @@
   border: 2px dashed #f0ad4e; /* Thêm viền để dễ nhận biết */
   pointer-events: none;      /* Vô hiệu hóa tương tác */
 }
-
-/* Cho phép menu vẫn hoạt động */
-.post-card.pending-review .menu-wrapper {
-    pointer-events: auto;
-}

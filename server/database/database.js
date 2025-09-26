@@ -40,7 +40,7 @@ const PostSchema = new mongoose.Schema({
   moTa: String,
   hinhAnh: String,
   soLuotBaoCao: { type: Number, default: 0 },
-  trangThaiBaoCao: { type: String, enum: ['Bình thường', 'Chờ duyệt', 'Đã khóa'], default: 'Bình thường' }
+  trangThaiBaoCao: { type: String, enum: ['Bình thường', 'Đang xử lý', 'Đã xử lý', 'Bị từ chối', 'Đã khóa', 'Từ chối khóa'], default: 'Bình thường' }
 
 });
 export const Post = mongoose.model('Post', PostSchema);
@@ -59,7 +59,7 @@ const ReportSchema = new mongoose.Schema({
   baiBiBaoCao: { type: mongoose.Schema.Types.ObjectId, ref: 'Post' },
   lyDo: String,
   thoiGianBaoCao: { type: Date, default: Date.now },
-  trangThai: { type: String, enum: ['Đang xử lý', 'Đã xử lý', 'Bị từ chối'], default: 'Đang xử lý' },
+  trangThai: { type: String, enum: ['Đang xử lý', 'Đã duyệt', 'Không duyệt'], default: 'Đang xử lý' },
   adminXuLy: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin', default: null }
 });
 export const Report = mongoose.model('Report', ReportSchema);

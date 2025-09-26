@@ -7,9 +7,13 @@
     background-color: #FFF2E0;
     width: 240px;
     padding: 10px 0;
+    text-align: center;
 }
 .reported-container>label{
     font-weight: bold;
+}
+.reported-post-desc{
+    height: 50px;
 }
 .reported-container>img{
     width: 171px;
@@ -56,4 +60,15 @@
 
 .reported-button-no:hover {
     background-color: #da190b;
+}
+.reported-button-yes.disabled,
+.reported-button-no.disabled {
+    background-color: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
+}
+
+.reported-button-yes.disabled:hover,
+.reported-button-no.disabled:hover {
+    background-color: #cccccc; /* giữ màu xám khi hover */
 }

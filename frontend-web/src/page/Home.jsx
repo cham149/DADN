@@ -137,7 +137,9 @@ const Home = () => {
               {/* Bài đăng khớp */}
               {searchPosts && searchPosts.length > 0 ? (
                 searchPosts.map((post) => (
-                  <PostCard key={post._id}
+                  <PostCard 
+                    key={post._id}
+                    type="user"
                     postId={post._id}
                     trangThaiBaoCao={post.trangThaiBaoCao}
                     avatar={post.nguoiDang?.avatar}
@@ -171,7 +173,9 @@ const Home = () => {
             <>
               {posts.length > 0 ? (
                 posts.map((post) => (
-                  <PostCard key={post._id}
+                  <PostCard 
+                    key={post._id}
+                    type="user"   
                     postId={post._id}
                     trangThaiBaoCao={post.trangThaiBaoCao}
                     avatar={post.nguoiDang?.avatar}

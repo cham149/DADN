@@ -39,6 +39,17 @@
     background-color: #FFF2E0 ;
   
 }
+.post-body-list{
+    display: grid;
+    grid-template-columns: repeat(3, 335px);
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 20px 5%;
+    row-gap: 30px;   
+}
+.post-body-list .post-content div{
+    display: block;
+}
 .category-list, .type-of-transaction{
     background-color: #D9D9D9;
     font-weight: bold;

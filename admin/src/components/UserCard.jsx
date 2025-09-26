@@ -1,7 +1,7 @@
 import React from 'react'
 import '../style/UserCard.css'
 
-const UserCard = ({ type = "user", data, onEdit, onDelete }) => {
+const UserCard = ({ type = "user", data, onEdit, onDelete, onLock, onUnlock  }) => {
   const adminAvatar = "https://i.pinimg.com/736x/20/ef/6b/20ef6b554ea249790281e6677abc4160.jpg";
 
   return (
@@ -18,7 +18,7 @@ const UserCard = ({ type = "user", data, onEdit, onDelete }) => {
       />
 
       <div className='user-infor'>
-        {type === "user" ? (
+        {(type === "user" || type === "reported") ? (
           <>
             <label className='user-email'>email: {data?.email}</label>
             <label className='user-role'>vai trò: {data?.vaiTro}</label>
@@ -37,12 +37,43 @@ const UserCard = ({ type = "user", data, onEdit, onDelete }) => {
       </div>
 
       <div className='user-button-container'>
-        <button className='user-button-update' onClick={() => onEdit && onEdit(data)}>
-          Sửa
-        </button>
-        <button className='user-button-delete' onClick={() => onDelete && onDelete(data)}>
-          Xóa
-        </button>
+        {(type === "user" || type === "admin") && (
+          <>
+            <button
+              className='user-button-update'
+              onClick={() => onEdit && onEdit(data)}
+            >
+              Sửa
+            </button>
+            <button
+              className='user-button-delete'
+              onClick={() => onDelete && onDelete(data)}
+            >
+              Xóa
+            </button>
+          </>
+        )}
+
+          {type === "reported" && (
+            <>
+              {data?.trangThai === "Mở" && onLock && (
+                <button
+                  className='user-button-lock'
+                  onClick={() => onLock(data)}
+                >
+                  Khóa
+                </button>
+              )}
+              {data?.trangThai === "Khóa" && onUnlock && (
+                <button
+                  className='user-button-unlock'
+                  onClick={() => onUnlock(data)}
+                >
+                  Mở khóa
+                </button>
+              )}
+            </>
+          )}
       </div>
     </div>
   )

@@ -17,7 +17,6 @@ export const getMyPosts = async (req, res) => {
 
     const posts = await Post.find({
       nguoiDang: new mongoose.Types.ObjectId(userID),
-      trangThaiBaoCao: { $ne: 'Đã khóa' } // Lấy bài 'Bình thường' và 'Chờ duyệt', bỏ qua 'Đã khóa'
     })
       .populate('nguoiDang')
       .populate('danhMuc')
@@ -162,7 +161,7 @@ export const getPosts = async (req, res) => {
     } = req.query;
 
     const filter = {
-      trangThaiBaoCao: 'Bình thường' // Chỉ lấy bài viết bình thường
+      trangThaiBaoCao: { $in: ['Bình thường', 'Đang xử lý'] }
     };
 
 

@@ -22,9 +22,9 @@ export const createUser = async (req, res) => {
     }
 
     // Kiểm tra tên đã tồn tại chưa
-    const existingTen = await Admin.findOne({ ten });
+    const existingTen = await User.findOne({ ten });
     if (existingTen) {
-      return res.status(400).json({ message: "Tên admin này đã tồn tại" });
+      return res.status(400).json({ message: "Tên user này đã tồn tại" });
     }
   
     const newUser = new User({

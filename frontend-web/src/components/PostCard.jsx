@@ -4,6 +4,7 @@ import OptionMenu from "./OptionMenu";
 import axios from "axios";
 
 const PostCard = ({
+  type = "user",
   avatar,
   tenNguoiDung,
   thoiGianCapNhat,
@@ -22,6 +23,7 @@ const PostCard = ({
   onOpenChat,
   postId,
   trangThaiBaoCao,
+  soLuotBaoCao, 
   onPostDeleted,
   onStartEdit,
   // Lấy toàn bộ object post để truyền đi khi sửa
@@ -33,7 +35,7 @@ const PostCard = ({
   const handleContact = async () => {
     if (!user || !nguoiDang || user._id === nguoiDang._id) {
       alert("⛔ Không thể liên hệ (user không tồn tại hoặc là người đăng)");
-      return;zz
+      return;
     }
 
     try {
@@ -117,6 +119,10 @@ const PostCard = ({
       alert("Lỗi: Không tìm thấy ID bài viết.");
       return;
     }
+    if (user._id === nguoiDang._id) {
+      alert("⛔ Bạn không thể báo cáo bài viết của chính mình.");
+      return;
+    }
 
     try {
       const res = await axios.post(`http://localhost:5000/api/posts/${postId}/report`, {
@@ -133,7 +139,14 @@ const PostCard = ({
 
   // --- QUY TẮC 4: Bài viết bị làm mờ xám trên trang cá nhân của chủ bài ---
   const isOwner = user?._id === nguoiDang?._id;
-  const isPendingAndOwnerViewing = trangThaiBaoCao === 'Chờ duyệt' && isProfilePage && isOwner;
+  const isPendingAndOwnerViewing = trangThaiBaoCao === 'Đã khóa' && isProfilePage && isOwner;
+console.log("user._id:", user?._id);
+console.log("nguoiDang._id:", nguoiDang?._id);
+console.log("isOwner:", isOwner);
+console.log("id" , postId);
+
+console.log("trangThaiBaoCao:", trangThaiBaoCao);
+console.log("isPendingAndOwnerViewing:", trangThaiBaoCao === 'Đã khóa' && isProfilePage && isOwner);
 
   return (
     <div className={`post-card ${isPendingAndOwnerViewing ? 'pending-review' : ''}`}>
@@ -175,6 +188,11 @@ const PostCard = ({
             <div><b>Danh mục:</b><label style={{ color: 'red', fontWeight: 'bold' }}>{danhMuc}</label></div>
             <div><b>Tình trạng:</b><label style={{ color: 'red', fontWeight: 'bold' }}>{tinhTrangVatDung}</label></div>
             <div><b>Trạng thái:</b><label style={{ color: 'red', fontWeight: 'bold' }}>{trangThaiBaiDang}</label></div>
+            {type === "admin" && (
+              <div className="admin-extra">
+                <div><b>Số lượt báo cáo:</b><label style={{ color: 'red', fontWeight: 'bold' }}>{soLuotBaoCao}</label></div>
+              </div>
+            )}
           </div>
           <div className="info-mini">
             <div><b>Giao dịch:</b><label style={{ color: 'red', fontWeight: 'bold' }}>{loaiGiaoDich}</label></div>
@@ -186,11 +204,21 @@ const PostCard = ({
             ) : (
               <div><i>Cho ai có nhu cầu</i></div>
             )}
+            {type === "admin" && (
+              <div className="admin-extra">
+                <div><b>Trạng thái báo cáo:</b><label style={{ color: 'red', fontWeight: 'bold' }}>{trangThaiBaoCao}</label></div>
+              </div>
+            )}
+
           </div>
         </div>
       </div>
 
-      <button className="contact-button" onClick={handleContact}>liên hệ người đăng</button>
+      {type === "user" && (
+        <button className="contact-button" onClick={handleContact}>
+          Liên hệ người đăng
+        </button>
+      )}
 
     </div>
   );

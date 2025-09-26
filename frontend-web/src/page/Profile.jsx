@@ -74,7 +74,7 @@ const Profile = () => {
         setEditedName(userRes.data.ten || "");
         setEditedAvatar(userRes.data.avatar || "");
         setEditedDescription(userRes.data.moTa || "");
-        setDanhMucList(danhMucRes.data.categories|| []);
+        setDanhMucList(danhMucRes.data|| []);
       } catch (error) {
         console.error("Error in fetchData:", error.response?.data || error.message);
         setError(`Lỗi khi tải dữ liệu: ${error.response?.data?.message || error.message}`);
@@ -474,6 +474,7 @@ const Profile = () => {
                   posts.map((post) => (
                     <PostCard
                       key={post._id}
+                      type="user"   
                       postId={post._id} 
                       trangThaiBaoCao={post.trangThaiBaoCao}
                       avatar={post.nguoiDang?.avatar || "/default-avatar.png"}

@@ -12,7 +12,7 @@ const Category = ({ onCategoryClick }) => {
         console.log("Categories trong React:", categories);
 
         console.log("Kết quả API:", res.data); 
-        setCategories(res.data.categories);
+        setCategories(res.data);
         
       } catch (err) {
         console.error("Lỗi khi lấy danh mục:", err);
