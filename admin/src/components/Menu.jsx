@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';  
 import "../style/Menu.css";
 
 const Menu = ({ isOpen, setBannerText }) => {
   const [openSubmenu, setOpenSubmenu] = useState(false);
   const [adminInfo, setAdminInfo] = useState({ ten: "", email: "" });
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Lấy thông tin admin từ localStorage
     const adminData = JSON.parse(localStorage.getItem("admin"));
     if (adminData) {
       setAdminInfo({ ten: adminData.ten || "", email: adminData.email || "" });
     }
-  }, []); // Chỉ chạy 1 lần khi component mount
+  }, []);
 
   const toggleSubmenu = () => setOpenSubmenu(!openSubmenu);
 
@@ -25,6 +26,12 @@ const Menu = ({ isOpen, setBannerText }) => {
   const handleUserClick = () => {
     setBannerText("USER");
     setOpenSubmenu(false);
+  };
+
+  //hàm đăng xuất
+  const handleLogout = () => {
+    localStorage.removeItem("admin");   // xoá token/info admin
+    navigate("/login");                 // điều hướng về trang login
   };
 
   return (
@@ -53,7 +60,7 @@ const Menu = ({ isOpen, setBannerText }) => {
           <li onClick={() => setBannerText("QUẢN LÝ BÀI ĐĂNG")}>Quản lý bài đăng</li>
           <li onClick={() => setBannerText("QUẢN LÝ BÁO CÁO")}>Quản lý báo cáo</li>
           <li onClick={() => setBannerText("THỐNG KÊ")}>Thống kê</li>
-          <li>Đăng xuất</li>
+          <li onClick={handleLogout}>Đăng xuất</li>
         </ul>
       </div>
     </div>

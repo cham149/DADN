@@ -6,7 +6,7 @@ import Banner from '../components/Banner';
 import HumanResources from '../components/HumanResources';
 import Post from '../components/Post';
 import Report from '../components/Report';
-// import ThongKe from '../components/ThongKe';
+import Statistics from '../components/Statistics';
 
 const Home = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,6 +25,8 @@ const renderContent = () => {
       return <Post />;
     case "QUẢN LÝ BÁO CÁO":
       return <Report />;
+    case "THỐNG KÊ":
+      return <Statistics />;
     default:
       return null ;
   }

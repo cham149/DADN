@@ -6,6 +6,7 @@ import chat from "./chat.js";
 import report from "./report.js";
 import reported from "./reported.js";
 import admin from "./admin.js";
+import statistics from "./statistics.js"; 
 
 const configure = (app) => {
   app.use("/api", login);
@@ -16,6 +17,7 @@ const configure = (app) => {
   app.use("/api", report);
   app.use("/api", reported);
   app.use("/api", admin);
+    app.use("/api", statistics); 
 };
 
 export default configure;

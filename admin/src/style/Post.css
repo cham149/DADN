@@ -41,11 +41,14 @@
 }
 .post-body-list{
     display: grid;
-    grid-template-columns: repeat(3, 335px);
+    grid-template-columns: repeat(4, 1fr);
     justify-content: space-between;
     flex-wrap: wrap;
     padding: 20px 5%;
     row-gap: 30px;   
+}
+.post-body-list>.post-card{
+    width: 300px;
 }
 .post-body-list .post-content div{
     display: block;
